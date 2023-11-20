@@ -1,4 +1,4 @@
-int readPin = A3; 
+int readPin = A0; 
 
 int val = 0; 
 void setup() {
