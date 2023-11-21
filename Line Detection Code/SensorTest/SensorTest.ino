@@ -8,7 +8,8 @@ void setup() {
 
 void loop() {
 	anVal = analogRead(readPin);  //read the input pin
-	if (anVal > threshhold) {
+	
+  if (anVal > threshhold) {
     Serial.println("Light");
   } else {
     Serial.println("Dark");
