@@ -60,19 +60,19 @@ void loop() {
 
     case 1:  // Turn left
       curveLeft();
-      delay(2000);  // Turn left for 2 seconds
+      delay(2500);  // Turn left for 2 seconds
       state = 2;    // Next state: turn right
       break;
 
     case 2:  // Turn right
       curveRight();
-      delay(2500);  // Turn right for 2 seconds
+      delay(3000);  // Turn right for 2 seconds
       state = 3;    // Next state: move backward
       break;
 
     case 3:  // Move backward
       moveBackward();
-      delay(5000);  // Move backward for 2 seconds
+      delay(6000);  // Move backward for 2 seconds
       state = 4;    // Next state: spin in a circle
       break;
 
