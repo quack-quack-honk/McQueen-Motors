@@ -1,23 +1,40 @@
+const int buttonPin = 2;  // Change this to the pin where your button is connected
+const int ledPin = 13;
+const int arraySize = 67;
+bool BinCode[arraySize];
+
 void setup() {
-  //start serial connection
   Serial.begin(9600);
-  //configure pin 2 as an input and enable the internal pull-up resistor
-  pinMode(2, INPUT_PULLUP);
-  pinMode(13, OUTPUT);
+  pinMode(buttonPin, INPUT_PULLUP); // Use INPUT_PULLUP for active LOW button
+  pinMode(ledPin, OUTPUT);
+
+
+  // Output the current value of the sensor every second
+  for (int i = 0; i < arraySize; i++) {
+    // Read and print the current sensor value
+    int sensorValue = digitalRead(buttonPin);
+    Serial.print("Current Sensor Status: ");
+    Serial.println(sensorValue);
+
+    // Add the button status to the array
+    BinCode[i] = !sensorValue; // Invert the value for active LOW
+    delay(1000);  // Wait for 1 second
+  }
+
+  // Print the array values to the Serial Monitor at the end
+  Serial.println("Binary Barcode: ");
+  for (int i = 0; i < arraySize; i++) {
+    Serial.print(BinCode[i]);
+    Serial.print(" ");
+  }
+  Serial.println();
+
+  // Stop the program after printing the array
+  while (true) {
+    // You can add any additional logic here if needed
+  }
 }
 
 void loop() {
-  //read the pushbutton value into a variable
-  int sensorVal = digitalRead(2);
-  //print out the value of the pushbutton
-  Serial.println(sensorVal);
 
-  // Keep in mind the pull-up means the pushbutton's logic is inverted. It goes
-  // HIGH when it's open, and LOW when it's pressed. Turn on pin 13 when the
-  // button's pressed, and off when it's not:
-  if (sensorVal == HIGH) {
-    digitalWrite(13, LOW);
-  } else {
-    digitalWrite(13, HIGH);
-  }
 }
