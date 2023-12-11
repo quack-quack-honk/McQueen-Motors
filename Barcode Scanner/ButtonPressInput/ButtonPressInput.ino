@@ -7,6 +7,42 @@ bool SubArray2[28];  // Modified size to cover BinCode[36]-BinCode[63]
 bool LeftSide[28];
 bool RightSide[28];
 
+// Custom encoded key for LeftSide
+const char LeftSideKey[10][7] = {
+  "0001101", // 0
+  "0011001", // 1
+  "0010011", // 2
+  "0111101", // 3
+  "0100011", // 4
+  "0110001", // 5
+  "0101111", // 6
+  "0111011", // 7
+  "0110111", // 8
+  "0001011"  // 9
+};
+
+// Custom encoded key for RightSide
+const char RightSideKey[10][7] = {
+  "1110010", // 0
+  "1100110", // 1
+  "1101100", // 2
+  "1000010", // 3
+  "1011100", // 4
+  "1001110", // 5
+  "1010000", // 6
+  "1000100", // 7
+  "1001000", // 8
+  "1110100"  // 9
+};
+
+int binaryToDecimal(bool binary[7]) {
+  int decimal = 0;
+  for (int i = 0; i < 7; i++) {
+    decimal = (decimal << 1) | binary[i];
+  }
+  return decimal;
+}
+
 void scanBarcode() {
   // Output the current value of the sensor every second
   for (int i = 0; i < arraySize; i++) {
@@ -16,8 +52,8 @@ void scanBarcode() {
     Serial.println(sensorValue);
 
     // Add the button status to the array
-    BinCode[i] = !sensorValue; // Invert the value for active LOW
-    delay(1000);  // Wait for 1 second
+    BinCode[i] = !sensorValue;  // Invert the value for active LOW
+    delay(1000);                // Wait for 1 second
   }
 
   // Check the first three digits of the array
@@ -54,11 +90,21 @@ void setup() {
   //configure pin 2 as an input and enable the internal pull-up resistor
   pinMode(2, INPUT_PULLUP);
   pinMode(13, OUTPUT);
-  pinMode(buttonPin, INPUT_PULLUP); // Use INPUT_PULLUP for active LOW button
+  pinMode(buttonPin, INPUT_PULLUP);  // Use INPUT_PULLUP for active LOW button
   pinMode(ledPin, OUTPUT);
 
   // Perform the barcode scanning
   scanBarcode();
+
+  // Convert binary values to decimal using the custom encoded key
+  int leftSideDecimal = binaryToDecimal(LeftSide);
+  int rightSideDecimal = binaryToDecimal(RightSide);
+
+  // Print the decimal values to the Serial Monitor
+  Serial.print("LeftSide Decimal: ");
+  Serial.println(leftSideDecimal);
+  Serial.print("RightSide Decimal: ");
+  Serial.println(rightSideDecimal);
 
   // Print the array values to the Serial Monitor at the end
   Serial.println("Binary Barcode: ");
