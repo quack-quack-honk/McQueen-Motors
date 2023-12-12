@@ -39,16 +39,18 @@ bool DBit8[7];             // Contains binary information for the 8th denary bit
 // 2 new arrays created to separate the data bits
 // If the barcode is the opposite way around then the data should be sorted accordingly into right and left
 void scanBarcode() {
-  // Output the current value of the sensor every second
+  // Output the current value of the serial input
   for (int i = 0; i < arraySize; i++) {
-    // Read and print the current sensor value
-    int sensorValue = digitalRead(buttonPin);
-    Serial.print("Current Sensor Status: ");
-    Serial.println(sensorValue);
+    // Read and print the current serial input value
+    while (!Serial.available()) {
+      // Wait for serial input
+    }
+    int serialValue = Serial.read() - '0'; // Convert ASCII to integer
+    Serial.print("Current Serial Input: ");
+    Serial.println(serialValue);
 
-    // Add the button status to the array
-    BinCode[i] = !sensorValue;  // Invert the value for active LOW
-    delay(1000);                // Wait for 1 second
+    // Add the serial input status to the array
+    BinCode[i] = serialValue;
   }
 
   // Check the first three digits of the array
@@ -78,6 +80,7 @@ void scanBarcode() {
     scanBarcode();  // Call the function recursively for a new scan
   }
 }
+
 
 
 
