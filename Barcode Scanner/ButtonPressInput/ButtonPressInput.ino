@@ -1,21 +1,43 @@
-const int buttonPin = 2;  // Change this to the pin where your button is connected
-const int ledPin = 13;
-const int arraySize = 67;
-bool BinCode[arraySize];
-bool SubArray1[28];
-bool SubArray2[28];  // Modified size to cover BinCode[36]-BinCode[63]
-bool LeftSide[28];
-bool RightSide[28];
-bool DBit1[7];
-bool DBit2[7];
-bool DBit3[7];
-bool DBit4[7];
-bool DBit5[7];
-bool DBit6[7];
-bool DBit7[7];
-bool DBit8[7];
+// CHECKSUM NEEDS TO BE ADDED IN
+// ALL THE CHECKS NEED TO BE ADDED IN 
+// IF THE BARCODE IS BEING READ BACKWARDS THEN ALL THE VALUES IN LEFTSIDE AND RIGHTSIDE SHOULD BE FLIPPED RATHER THAN THE ARRAYS BEING SWAPPED
+// THE DELAY BETWEEN SCANS OF THE SENSOR STATUS MUST BE ADAPTED BASED ON THE SIZE OF REAL BARCODE
 
 
+// This program takes an input at the moment from a button which is used to simulate high and low
+// A sensor can replace the button with no extra coding required
+// The code takes an input of 67 bits which is the length of the barcode
+// The code checks the binary is in the correct format, i.e. starts and ends with 101 and has 01010 in the middle
+// An error message will be displayed if it is not in the correct format
+// The code splits the longer array into smaller more manageable arrays for processing
+// The program outputs all the smaller arrays(for debugging purposes)
+// The program decodes all of the smaller arrays into decimal numbers
+// The program outputs the decimal number
+
+// Defining all global variables
+const int buttonPin = 2;  // Pin for the sensor, change it to pin that sensor is connected to 
+const int ledPin = 13;    // Pin for the inbuild Arduinio LED, no longer being used in the code
+const int arraySize = 67; // Defining how long the barcode will be
+bool BinCode[arraySize];  // Array containing the whole binary sequence for the barcode
+bool SubArray1[28];       // Splits the first half of BinCode, removing identifier bits
+bool SubArray2[28];       // Splits the second half of BinCode, removing identifier bits
+bool LeftSide[28];        // Checks which direction barcode is being read from //AND NEEDS TO BE MODIFIED TO FLIP DATA IF NECESSARY
+bool RightSide[28];       // Checks which direction barcode is being read from //AND NEEDS TO BE MODIFIED TO FLIP DATA IF NECESSARY
+bool DBit1[7];            // Contains binary information for the 1st denary bit
+bool DBit2[7];            // Contains binary information for the 2nd denary bit
+bool DBit3[7];            // Contains binary information for the 3rd denary bit
+bool DBit4[7];            // Contains binary information for the 4th denary bit
+bool DBit5[7];            // Contains binary information for the 5th denary bit
+bool DBit6[7];            // Contains binary information for the 6th denary bit
+bool DBit7[7];            // Contains binary information for the 7th denary bit
+bool DBit8[7];            // Contains binary information for the 8th denary bit //RESEARCH ON CHECKSUM AND MAKE SURE THIS IS DONE CORRECTLY
+
+
+
+// Function to collect data from sensor and sort into arrays accordingly 
+// Takes data inputted from sensor/button and creates an array
+// 2 new arrays created to separate the data bits
+// If the barcode is the opposite way around then the data should be sorted accordingly into right and left
 void scanBarcode() {
   // Output the current value of the sensor every second
   for (int i = 0; i < arraySize; i++) {
@@ -58,6 +80,10 @@ void scanBarcode() {
 }
 
 
+
+// Function for the decoding of the binary information into 8-bit denary
+// Encoding key is defined
+// Each smaller 'DBit' array is decoded using the key
 void decodeBarcode() {
   // Define the encoding mappings for DBit1 to DBit4
   const char* encoding1[] = {"0001101", "0011001", "0010011", "0111101", "0100011", "0110001", "0101111", "0111011", "0110111", "0001011"};
@@ -111,61 +137,6 @@ void decodeBarcode() {
     }
   }
 
-  // for (int i = 0; i < 4; i++){
-  //   int digitL = -1;
-  //   int digitR = -1;
-  //   bool valL[7];
-  //   bool valR[7];
-
-  //   for (int j = i; j < i + 7; j++){
-  //     valL[j] = LeftSide[j];
-  //   }
-
-  //   for (int j = i; j < i + 7; j++){
-  //     valR[j] = RightSide[j];
-  //   }
-    
-    
-  //   for (int j = 0; j < 10; j++) {
-  //     bool match = true;
-
-  //     for (int k = 0; k < 7; k++) {
-  //         // Check if the boolean array matches the corresponding part of the character array
-  //         if (valL[k] != (encoding1[j * 7 + k] == '1')) {
-  //             match = false;
-  //             break;
-  //         }
-  //     }
-
-  //     if (match) {
-  //         digitL = j;
-  //         break;
-  //     }
-  //   }
-
-
-  //   for (int j = 0; j < 10; j++) {
-  //     bool match = true;
-
-  //     for (int k = 0; k < 7; k++) {
-  //         // Check if the boolean array matches the corresponding part of the character array
-  //         if (valR[k] != (encoding2[j * 7 + k] == '1')) {
-  //             match = false;
-  //             break;
-  //         }
-  //     }
-
-  //     if (match) {
-  //         digitR = j;
-  //         break;
-  //     }
-  //   }
-
-  //   decodedDigits[i] = digitL;
-  //   decodedDigits[i+4] = digitR;    
-  // }
-
-
   // Print the array of decoded digits
   Serial.print("Decoded Digits: ");
   for (int i = 0; i < 8; i++) {
@@ -177,7 +148,11 @@ void decodeBarcode() {
 
 
 
-
+// Main function for the code
+// Initialises relavent features
+// Calls function to scan the barcode and create arrays
+// Prints all relavent arrays
+// Calls function to decode the relavent arrays
 void setup() {
   //start serial connection
   Serial.begin(9600);
@@ -198,7 +173,7 @@ void setup() {
   }
   Serial.println();
 
-  // Print the subarrays
+  // Print the first subarray
   Serial.println("SubArray1: ");
   for (int i = 0; i < 28; i++) {
     Serial.print(SubArray1[i]);
@@ -206,6 +181,7 @@ void setup() {
   }
   Serial.println();
 
+  // Print the second subarray
   Serial.println("SubArray2: ");
   for (int i = 0; i < 28; i++) {
     Serial.print(SubArray2[i]);
@@ -214,6 +190,7 @@ void setup() {
   Serial.println();
 
   // Check and assign subarrays to LeftSide and RightSide
+  // IF SUBARRAY1 IS BEING ASSIGNED TO THE RIGHT SIDE THEN ALL ARRAYS NEED TO BE FLIPPED
   if (SubArray1[0] == 0 && SubArray2[0] == 1) {
     memcpy(LeftSide, SubArray1, 28 * sizeof(bool));
     memcpy(RightSide, SubArray2, 28 * sizeof(bool));
@@ -315,10 +292,10 @@ void setup() {
   Serial.println();
 
   decodeBarcode();
-
-
 }
 
+
+// Function for repetitive tasks
 void loop() {
   // No need for loop logic since scanning is performed in the setup
 }
