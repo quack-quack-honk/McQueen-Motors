@@ -54,8 +54,10 @@ void scanBarcode() {
   }
 
   // Check the first three digits of the array
-  if (!(BinCode[0] == 1 && BinCode[1] == 0 && BinCode[2] == 1)) {
-    Serial.println("Invalid Barcode");
+  if (!(BinCode[0] == 1 && BinCode[1] == 0 && BinCode[2] == 1
+      &&BinCode[64] == 1 && BinCode[65] == 0 && BinCode[66] == 1
+      &&BinCode[31] == 0 && BinCode[32] == 1 && BinCode[33] == 0 && BinCode[34] == 1 && BinCode[35] == 0)) {
+    Serial.println("Invalid identifiers");
     delay(2000);  // Wait for 2 seconds
     // Clear the array
     memset(BinCode, 0, sizeof(BinCode));
@@ -67,10 +69,10 @@ void scanBarcode() {
   memcpy(SubArray2, BinCode + 36, 28 * sizeof(bool));  // Modified starting index
 
   // Check and assign subarrays to LeftSide and RightSide
-  if (SubArray1[0] == 0 && SubArray2[0] == 1) {
+  if (SubArray1[0], SubArray1[7], SubArray1[14], SubArray1[21] == 0 && SubArray2[0], SubArray2[7], SubArray2[14], SubArray2[21] == 1) {
     memcpy(LeftSide, SubArray1, 28 * sizeof(bool));
     memcpy(RightSide, SubArray2, 28 * sizeof(bool));
-  } else if (SubArray2[0] == 0 && SubArray1[0] == 1) {
+  } else if (SubArray2[0], SubArray2[7], SubArray2[14], SubArray2[21] == 0 && SubArray1[0], SubArray1[7], SubArray1[14], SubArray1[21] == 1) {
     memcpy(LeftSide, SubArray2, 28 * sizeof(bool));
     memcpy(RightSide, SubArray1, 28 * sizeof(bool));
   } else {
@@ -80,7 +82,6 @@ void scanBarcode() {
     scanBarcode();  // Call the function recursively for a new scan
   }
 }
-
 
 
 
@@ -137,6 +138,8 @@ void decodeBarcode() {
       decodedDigits[i - 1] = digit;
     } else {
       decodedDigits[i - 1] = -1;  // Indicates an error
+      Serial.println("Not a valid barcode");
+      return;  // Exit the function since it's not a valid barcode
     }
   }
 
