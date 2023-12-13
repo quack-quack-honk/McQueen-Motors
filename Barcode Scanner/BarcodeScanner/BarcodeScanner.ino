@@ -1,5 +1,4 @@
 // CHECKSUM NEEDS TO BE ADDED IN
-// ALL THE CHECKS NEED TO BE ADDED IN
 // IF THE BARCODE IS BEING READ BACKWARDS THEN ALL THE VALUES IN LEFTSIDE AND RIGHTSIDE SHOULD BE FLIPPED RATHER THAN THE ARRAYS BEING SWAPPED
 // THE DELAY BETWEEN SCANS OF THE SENSOR STATUS MUST BE ADAPTED BASED ON THE SIZE OF REAL BARCODE
 
@@ -68,13 +67,20 @@ void scanBarcode() {
   memcpy(SubArray1, BinCode + 3, 28 * sizeof(bool));
   memcpy(SubArray2, BinCode + 36, 28 * sizeof(bool));  // Modified starting index
 
+
+
   // Check and assign subarrays to LeftSide and RightSide
   if (SubArray1[0], SubArray1[7], SubArray1[14], SubArray1[21] == 0 && SubArray2[0], SubArray2[7], SubArray2[14], SubArray2[21] == 1) {
     memcpy(LeftSide, SubArray1, 28 * sizeof(bool));
     memcpy(RightSide, SubArray2, 28 * sizeof(bool));
   } else if (SubArray2[0], SubArray2[7], SubArray2[14], SubArray2[21] == 0 && SubArray1[0], SubArray1[7], SubArray1[14], SubArray1[21] == 1) {
-    memcpy(LeftSide, SubArray2, 28 * sizeof(bool));
-    memcpy(RightSide, SubArray1, 28 * sizeof(bool));
+    // Reverse BinCode before copying
+    reverseArray(BinCode + 3, 23);
+    reverseArray(BinCode + 31, 31);
+
+    // Copy reversed sections to LeftSide and RightSide
+    memcpy(LeftSide, BinCode + 3, 28 * sizeof(bool));
+    memcpy(RightSide, BinCode + 31, 28 * sizeof(bool));
   } else {
     Serial.println("Invalid Subarrays");
     // You may add additional logic or handling for invalid cases
@@ -147,10 +153,21 @@ void decodeBarcode() {
   Serial.print("Decoded Digits: ");
   for (int i = 0; i < 8; i++) {
     Serial.print(decodedDigits[i]);
-    Serial.print(" ");
   }
   Serial.println();
 }
+
+
+
+// Function to reverse the given array
+void reverseArray(bool* arr, int size) {
+  for (int i = 0; i < size / 2; i++) {
+    bool temp = arr[i];
+    arr[i] = arr[size - i - 1];
+    arr[size - i - 1] = temp;
+  }
+}
+
 
 
 
@@ -175,7 +192,6 @@ void setup() {
   Serial.println("Binary Barcode: ");
   for (int i = 0; i < arraySize; i++) {
     Serial.print(BinCode[i]);
-    Serial.print(" ");
   }
   Serial.println();
 
@@ -183,7 +199,6 @@ void setup() {
   Serial.println("SubArray1: ");
   for (int i = 0; i < 28; i++) {
     Serial.print(SubArray1[i]);
-    Serial.print(" ");
   }
   Serial.println();
 
@@ -191,30 +206,13 @@ void setup() {
   Serial.println("SubArray2: ");
   for (int i = 0; i < 28; i++) {
     Serial.print(SubArray2[i]);
-    Serial.print(" ");
   }
   Serial.println();
-
-  // Check and assign subarrays to LeftSide and RightSide
-  // IF SUBARRAY1 IS BEING ASSIGNED TO THE RIGHT SIDE THEN ALL ARRAYS NEED TO BE FLIPPED
-  if (SubArray1[0] == 0 && SubArray2[0] == 1) {
-    memcpy(LeftSide, SubArray1, 28 * sizeof(bool));
-    memcpy(RightSide, SubArray2, 28 * sizeof(bool));
-  } else if (SubArray2[0] == 0 && SubArray1[0] == 1) {
-    memcpy(LeftSide, SubArray2, 28 * sizeof(bool));
-    memcpy(RightSide, SubArray1, 28 * sizeof(bool));
-  } else {
-    Serial.println("Invalid Subarrays");
-    // You may add additional logic or handling for invalid cases
-    memset(BinCode, 0, sizeof(BinCode));
-    scanBarcode();  // Call the function recursively for a new scan
-  }
 
   // Print the LeftSide and RightSide arrays
   Serial.println("LeftSide: ");
   for (int i = 0; i < 28; i++) {
     Serial.print(LeftSide[i]);
-    Serial.print(" ");
   }
   Serial.println();
 
@@ -223,7 +221,6 @@ void setup() {
   memcpy(DBit1, LeftSide, 7 * sizeof(bool));
   for (int i = 0; i < 7; i++) {
     Serial.print(DBit1[i]);
-    Serial.print(" ");
   }
   Serial.println();
 
@@ -232,7 +229,6 @@ void setup() {
   memcpy(DBit2, LeftSide + 7, 7 * sizeof(bool));
   for (int i = 0; i < 7; i++) {
     Serial.print(DBit2[i]);
-    Serial.print(" ");
   }
   Serial.println();
 
@@ -241,7 +237,6 @@ void setup() {
   memcpy(DBit3, LeftSide + 14, 7 * sizeof(bool));
   for (int i = 0; i < 7; i++) {
     Serial.print(DBit3[i]);
-    Serial.print(" ");
   }
   Serial.println();
 
@@ -250,14 +245,12 @@ void setup() {
   memcpy(DBit4, LeftSide + 21, 7 * sizeof(bool));
   for (int i = 0; i < 7; i++) {
     Serial.print(DBit4[i]);
-    Serial.print(" ");
   }
   Serial.println();
 
   Serial.println("RightSide: ");
   for (int i = 0; i < 28; i++) {
     Serial.print(RightSide[i]);
-    Serial.print(" ");
   }
   Serial.println();
 
@@ -266,7 +259,6 @@ void setup() {
   memcpy(DBit5, RightSide, 7 * sizeof(bool));
   for (int i = 0; i < 7; i++) {
     Serial.print(DBit5[i]);
-    Serial.print(" ");
   }
   Serial.println();
 
@@ -275,7 +267,6 @@ void setup() {
   memcpy(DBit6, RightSide + 7, 7 * sizeof(bool));
   for (int i = 0; i < 7; i++) {
     Serial.print(DBit6[i]);
-    Serial.print(" ");
   }
   Serial.println();
 
@@ -284,7 +275,6 @@ void setup() {
   memcpy(DBit7, RightSide + 14, 7 * sizeof(bool));
   for (int i = 0; i < 7; i++) {
     Serial.print(DBit7[i]);
-    Serial.print(" ");
   }
   Serial.println();
 
@@ -293,7 +283,6 @@ void setup() {
   memcpy(DBit8, RightSide + 21, 7 * sizeof(bool));
   for (int i = 0; i < 7; i++) {
     Serial.print(DBit8[i]);
-    Serial.print(" ");
   }
   Serial.println();
 
