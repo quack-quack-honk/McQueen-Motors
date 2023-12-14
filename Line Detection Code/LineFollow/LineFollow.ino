@@ -9,15 +9,15 @@ void setup() {
   servoLeft.attach(13);
   servoRight.attach(12);
 	Serial.begin(9600);   //setup serial at given baud rate
-  servoLeft.writeMicroseconds(1530);  // Left wheel counterclockwise
-  servoRight.writeMicroseconds(1470); // Right wheel counterclockwise
+  servoLeft.writeMicroseconds(1570);  // Left wheel counterclockwise
+  servoRight.writeMicroseconds(1430); // Right wheel counterclockwise
 }
 
 void loop() {
   Right = (analogRead(1) > threshhold);
   Left = (analogRead(0) > threshhold); // True when left sensor is off the line
-  servoLeft.writeMicroseconds(1530);  // Left wheel counterclockwise
-  servoRight.writeMicroseconds(1470); // Right wheel counterclockwise
+  servoLeft.writeMicroseconds(1570);  // Left wheel counterclockwise
+  servoRight.writeMicroseconds(1430); // Right wheel counterclockwise
 
   do{
     delay(1);
@@ -37,8 +37,8 @@ void loop() {
 }
 
 void nudgeLeft(){
-  servoLeft.writeMicroseconds(1500);  // Left wheel stop
-  servoRight.writeMicroseconds(1490); // Right wheel slow forwards
+  servoLeft.writeMicroseconds(1495);  // Left wheel stop
+  servoRight.writeMicroseconds(1480); // Right wheel slow forwards
   delay(250);
   do{
     delay(1);
