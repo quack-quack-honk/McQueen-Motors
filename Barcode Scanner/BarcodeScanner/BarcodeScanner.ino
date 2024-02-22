@@ -31,6 +31,8 @@ bool DBit6[7];             // Contains binary information for the 6th denary bit
 bool DBit7[7];             // Contains binary information for the 7th denary bit
 bool DBit8[7];             // Contains binary information for the 8th denary bit //RESEARCH ON CHECKSUM AND MAKE SURE THIS IS DONE CORRECTLY
 
+#include <LiquidCrystal_I2C.h>
+LiquidCrystal_I2C lcd(0x27, 16, 2); // I2C address 0x27, 16 column and 2 rows
 
 
 // Function to collect data from sensor and sort into arrays accordingly
@@ -40,6 +42,18 @@ bool DBit8[7];             // Contains binary information for the 8th denary bit
 void scanBarcode() {
   // Output the current value of the serial input
   for (int i = 0; i < arraySize; i++) {
+
+//    // Read and print the current serial input value
+//    while (!Serial.available()) {
+//      // Wait for serial input
+//    }
+//    int serialValue = Serial.read() - '0'; // Convert ASCII to integer
+//    Serial.print("Current Serial Input: ");
+//    Serial.println(serialValue);
+//
+//    // Add the serial input status to the array
+//    BinCode[i] = serialValue;
+
     // Read and print the current serial input value
     while (!Serial.available()) {
       // Wait for serial input
@@ -51,6 +65,8 @@ void scanBarcode() {
     // Add the serial input status to the array
     BinCode[i] = serialValue;
   }
+
+
 
   // Check the first three digits of the array
   if (!(BinCode[0] == 1 && BinCode[1] == 0 && BinCode[2] == 1
@@ -149,13 +165,24 @@ void decodeBarcode() {
     }
   }
 
-  // Print the array of decoded digits
-  Serial.print("Decoded Digits: ");
-  for (int i = 0; i < 8; i++) {
-    Serial.print(decodedDigits[i]);
-  }
-  Serial.println();
+
+// Define a String variable to store concatenated digits
+String concatenatedDigits = "";
+// Concatenate all decoded digits into the variable
+for (int i = 0; i < 8; i++) {
+  concatenatedDigits += String(decodedDigits[i]);
 }
+// Print the concatenated digits
+Serial.print("Barcode Digits: ");
+Serial.println(concatenatedDigits);
+
+lcd.clear();                 // clear display
+lcd.setCursor(2, 1);         // move cursor to   (2, 1)
+lcd.print(concatenatedDigits); // print message at (2, 1)
+delay(2000);                 // display the above for two seconds
+
+}
+
 
 
 
@@ -184,6 +211,9 @@ void setup() {
   pinMode(13, OUTPUT);
   pinMode(buttonPin, INPUT_PULLUP);  // Use INPUT_PULLUP for active LOW button
   pinMode(ledPin, OUTPUT);
+
+  lcd.init(); // initialize the lcd
+  lcd.backlight();
 
   // Perform the barcode scanning
   scanBarcode();
@@ -292,5 +322,7 @@ void setup() {
 
 // Function for repetitive tasks
 void loop() {
-  // No need for loop logic since scanning is performed in the setup
+
+
 }
+
