@@ -3,7 +3,7 @@
 Servo servoLeft;                      // Declare left and right servos
 Servo servoRight;
 int threshhold = 900;
-bool Left, Centre, Right;
+bool Left, Centre, Right, whiteLine;
 
 void setup() {
   servoLeft.attach(13);
