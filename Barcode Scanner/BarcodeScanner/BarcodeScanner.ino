@@ -42,32 +42,32 @@ LiquidCrystal_I2C lcd(0x27, 16, 2); // I2C address 0x27, 16 column and 2 rows
 // 2 new arrays created to separate the data bits
 // If the barcode is the opposite way around then the data should be sorted accordingly into right and left
 void scanBarcode() {
-  for (int i = 0; i < arraySize; i++) {
-    // Read and print the current sensor input value
-    int sensorValue = digitalRead(photodiodePin);
-    Serial.print("Sensor Value: ");
-    Serial.println(sensorValue);
-
-    // Add the sensor input status to the array
-    BinCode[i] = sensorValue;
-
-    // Optional delay before reading again
-    delay(1000);
-  }
-
-//  // Output the current value of the serial input
 //  for (int i = 0; i < arraySize; i++) {
-//    // Read and print the current serial input value
-//    while (!Serial.available()) {
-//      // Wait for serial input
-//    }
-//    int serialValue = Serial.read() - '0'; // Convert ASCII to integer
-//    Serial.print("Current Serial Input: ");
-//    Serial.println(serialValue);
+//    // Read and print the current sensor input value
+//    int sensorValue = digitalRead(photodiodePin);
+//    Serial.print("Sensor Value: ");
+//    Serial.println(sensorValue);
 //
-//    // Add the serial input status to the array
-//    BinCode[i] = serialValue;
+//    // Add the sensor input status to the array
+//    BinCode[i] = sensorValue;
+//
+//    // Optional delay before reading again
+//    delay(1000);
 //  }
+
+  // Output the current value of the serial input
+  for (int i = 0; i < arraySize; i++) {
+    // Read and print the current serial input value
+    while (!Serial.available()) {
+      // Wait for serial input
+    }
+    int serialValue = Serial.read() - '0'; // Convert ASCII to integer
+    Serial.print("Current Serial Input: ");
+    Serial.println(serialValue);
+
+    // Add the serial input status to the array
+    BinCode[i] = serialValue;
+  }
 
 
 
@@ -196,23 +196,8 @@ void reverseArray(bool* arr, int size) {
 }
 
 
-// Main function for the code
-// Initialises relavent features
-// Calls function to scan the barcode and create arrays
-// Prints all relavent arrays
-// Calls function to decode the relavent arrays
-void setup() {
-  //start serial connection
-  Serial.begin(9600);
-  pinMode(photodiodePin, INPUT);  // Set the photodiode pin as input
-  pinMode(ledPin, OUTPUT);
-
-  lcd.init(); // initialize the lcd
-  lcd.backlight();
-
-  // Perform the barcode scanning
-  scanBarcode();
-
+void barcodeOutput() {
+  
   // Print the array values to the Serial Monitor at the end
   Serial.println("Binary Barcode: ");
   for (int i = 0; i < arraySize; i++) {
@@ -310,7 +295,26 @@ void setup() {
     Serial.print(DBit8[i]);
   }
   Serial.println();
+}
 
+
+
+// Main function for the code
+// Initialises relavent features
+// Calls function to scan the barcode and create arrays
+// Prints all relavent arrays
+// Calls function to decode the relavent arrays
+void setup() {
+  //start serial connection
+  Serial.begin(9600);
+  pinMode(photodiodePin, INPUT);  // Set the photodiode pin as input
+
+  lcd.init(); // initialize the lcd
+  lcd.backlight();
+
+  // Perform the barcode scanning
+  scanBarcode();
+  barcodeOutput();
   decodeBarcode();
 }
 
