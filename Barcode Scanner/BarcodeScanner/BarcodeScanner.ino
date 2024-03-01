@@ -13,12 +13,10 @@
 // The program decodes all of the smaller arrays into decimal numbers
 // The program outputs the decimal number
 
+
 // Defining all global variables
 const int photodiodePin = 2;    // Digital pin where the photodiode is connected
 const int threshold = 500;      // Adjust this threshold based on your environment
-
-const int buttonPin = 2;   // Pin for the sensor, change it to pin that sensor is connected to
-const int ledPin = 13;     // Pin for the inbuild Arduinio LED, no longer being used in the code
 const int arraySize = 67;  // Defining how long the barcode will be
 bool BinCode[arraySize];   // Array containing the whole binary sequence for the barcode
 bool SubArray1[28];        // Splits the first half of BinCode, removing identifier bits
@@ -34,6 +32,7 @@ bool DBit6[7];             // Contains binary information for the 6th denary bit
 bool DBit7[7];             // Contains binary information for the 7th denary bit
 bool DBit8[7];             // Contains binary information for the 8th denary bit //RESEARCH ON CHECKSUM AND MAKE SURE THIS IS DONE CORRECTLY
 
+// Initialising the LED display
 #include <LiquidCrystal_I2C.h>
 LiquidCrystal_I2C lcd(0x27, 16, 2); // I2C address 0x27, 16 column and 2 rows
 
@@ -56,7 +55,7 @@ void scanBarcode() {
     delay(1000);
   }
 
-  // Output the current value of the serial input
+//  // Output the current value of the serial input
 //  for (int i = 0; i < arraySize; i++) {
 //    // Read and print the current serial input value
 //    while (!Serial.available()) {
@@ -108,7 +107,6 @@ void scanBarcode() {
     scanBarcode();  // Call the function recursively for a new scan
   }
 }
-
 
 
 // Function for the decoding of the binary information into 8-bit denary
@@ -188,8 +186,6 @@ delay(2000);                 // display the above for two seconds
 }
 
 
-
-
 // Function to reverse the given array
 void reverseArray(bool* arr, int size) {
   for (int i = 0; i < size / 2; i++) {
@@ -198,8 +194,6 @@ void reverseArray(bool* arr, int size) {
     arr[size - i - 1] = temp;
   }
 }
-
-
 
 
 // Main function for the code
@@ -211,10 +205,6 @@ void setup() {
   //start serial connection
   Serial.begin(9600);
   pinMode(photodiodePin, INPUT);  // Set the photodiode pin as input
-  //configure pin 2 as an input and enable the internal pull-up resistor
-//  pinMode(2, INPUT_PULLUP);
-//  pinMode(13, OUTPUT);
-//  pinMode(buttonPin, INPUT_PULLUP);  // Use INPUT_PULLUP for active LOW button
   pinMode(ledPin, OUTPUT);
 
   lcd.init(); // initialize the lcd
