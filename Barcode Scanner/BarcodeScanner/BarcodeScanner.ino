@@ -15,7 +15,7 @@
 
 
 // Defining all global variables
-const int photodiodePin = 2;    // Digital pin where the photodiode is connected
+const int sensorPin = 2;    // Digital pin where the photodiode is connected
 const int threshold = 500;      // Adjust this threshold based on your environment
 const int arraySize = 67;  // Defining how long the barcode will be
 bool BinCode[arraySize];   // Array containing the whole binary sequence for the barcode
@@ -42,19 +42,21 @@ LiquidCrystal_I2C lcd(0x27, 16, 2); // I2C address 0x27, 16 column and 2 rows
 // 2 new arrays created to separate the data bits
 // If the barcode is the opposite way around then the data should be sorted accordingly into right and left
 void scanBarcode() {
-//  for (int i = 0; i < arraySize; i++) {
-//    // Read and print the current sensor input value
-//    int sensorValue = digitalRead(photodiodePin);
-//    Serial.print("Sensor Value: ");
-//    Serial.println(sensorValue);
-//
-//    // Add the sensor input status to the array
-//    BinCode[i] = sensorValue;
-//
-//    // Optional delay before reading again
-//    delay(1000);
-//  }
+  for (int i = 0; i < arraySize; i++) {
+    // Read and print the current sensor input value
+    int sensorValue = digitalRead(sensorPin);
+    Serial.print("Sensor Value: ");
+    Serial.println(sensorValue);
 
+    // Add the sensor input status to the array
+    BinCode[i] = sensorValue;
+
+    // Optional delay before reading again
+    delay(1000);
+  }
+
+
+/*
   // Output the current value of the serial input
   for (int i = 0; i < arraySize; i++) {
     // Read and print the current serial input value
@@ -68,7 +70,7 @@ void scanBarcode() {
     // Add the serial input status to the array
     BinCode[i] = serialValue;
   }
-
+*/
 
 
   // Check the first three digits of the array
@@ -107,6 +109,7 @@ void scanBarcode() {
     scanBarcode();  // Call the function recursively for a new scan
   }
 }
+
 
 
 // Function for the decoding of the binary information into 8-bit denary
@@ -168,20 +171,20 @@ void decodeBarcode() {
   }
 
 
-// Define a String variable to store concatenated digits
-String concatenatedDigits = "";
-// Concatenate all decoded digits into the variable
-for (int i = 0; i < 8; i++) {
-  concatenatedDigits += String(decodedDigits[i]);
-}
-// Print the concatenated digits
-Serial.print("Barcode Digits: ");
-Serial.println(concatenatedDigits);
+  // Define a String variable to store concatenated digits
+  String concatenatedDigits = "";
+  // Concatenate all decoded digits into the variable
+  for (int i = 0; i < 8; i++) {
+    concatenatedDigits += String(decodedDigits[i]);
+  }
+  // Print the concatenated digits
+  Serial.print("Barcode Digits: ");
+  Serial.println(concatenatedDigits);
 
-lcd.clear();                 // clear display
-lcd.setCursor(2, 1);         // move cursor to   (2, 1)
-lcd.print(concatenatedDigits); // print message at (2, 1)
-delay(2000);                 // display the above for two seconds
+  lcd.clear();                 // clear display
+  lcd.setCursor(2, 1);         // move cursor to   (2, 1)
+  lcd.print(concatenatedDigits); // print message at (2, 1)
+  delay(2000);                 // display the above for two seconds
 
 }
 
@@ -307,7 +310,7 @@ void barcodeOutput() {
 void setup() {
   //start serial connection
   Serial.begin(9600);
-  pinMode(photodiodePin, INPUT);  // Set the photodiode pin as input
+  pinMode(sensorPin, INPUT);  // Set the photodiode pin as input
 
   lcd.init(); // initialize the lcd
   lcd.backlight();
