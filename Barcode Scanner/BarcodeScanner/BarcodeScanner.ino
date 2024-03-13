@@ -200,7 +200,6 @@ void reverseArray(bool* arr, int size) {
 
 
 void barcodeOutput() {
-  
   // Print the array values to the Serial Monitor at the end
   Serial.println("Binary Barcode: ");
   for (int i = 0; i < arraySize; i++) {
@@ -321,10 +320,12 @@ void setup() {
   decodeBarcode();
 }
 
+void moveForward() {
+  servoLeft.writeMicroseconds(1700);
+  servoRight.writeMicroseconds(1300);
+}
 
 // Function for repetitive tasks
 void loop() {
-
-
 }
 
