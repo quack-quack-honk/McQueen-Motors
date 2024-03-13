@@ -109,6 +109,17 @@ void scanBarcode() {
   }
 }
 
+void Checksum() {
+  int odd = (Dbit1 + Dbit3 + Dbit5 + Dbit7)*3
+  int even = Dbit2 + Dbit4 + Dbit6
+  int checksum = (10-[(even + odd)%10]) % 10
+  if (checksum % 10 = 0){
+    Dbit8 = 0
+  else {
+    Dbit8 = checksum
+  }  
+  }
+}
 
 
 // Function for the decoding of the binary information into 8-bit denary
