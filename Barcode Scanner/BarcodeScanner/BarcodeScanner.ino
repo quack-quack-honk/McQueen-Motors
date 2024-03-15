@@ -110,13 +110,13 @@ void scanBarcode() {
 }
 
 void Checksum() {
-  int odd = (Dbit1 + Dbit3 + Dbit5 + Dbit7)*3
-  int even = Dbit2 + Dbit4 + Dbit6
+  int odd = (decodedDigits[1] + decodedDigits[3] + decodedDigits[5] + decodedDigits[7])*3
+  int even = decodedDigits[2] + decodedDigits[4] + decodedDigits[6]
   int checksum = (10-[(even + odd)%10]) % 10
   if (checksum % 10 = 0){
-    Dbit8 = 0
+    decodedDigits[8] = 0
   else {
-    Dbit8 = checksum
+    decodedDigits[8] = checksum
   }  
   }
 }
