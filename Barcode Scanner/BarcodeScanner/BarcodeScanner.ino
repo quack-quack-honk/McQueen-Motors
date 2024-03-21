@@ -34,6 +34,9 @@ bool DBit6[7];             // Contains binary information for the 6th denary bit
 bool DBit7[7];             // Contains binary information for the 7th denary bit
 bool DBit8[7];             // Contains binary information for the 8th denary bit //RESEARCH ON CHECKSUM AND MAKE SURE THIS IS DONE CORRECTLY
 
+  // Array to store the decoded digits
+  int decodedDigits[8];
+
 #include <LiquidCrystal_I2C.h>
 LiquidCrystal_I2C lcd(0x27, 16, 2); // I2C address 0x27, 16 column and 2 rows
 
@@ -43,6 +46,7 @@ LiquidCrystal_I2C lcd(0x27, 16, 2); // I2C address 0x27, 16 column and 2 rows
 // 2 new arrays created to separate the data bits
 // If the barcode is the opposite way around then the data should be sorted accordingly into right and left
 void scanBarcode() {
+  /*
   for (int i = 0; i < arraySize; i++) {
     // Read and print the current sensor input value
     int sensorValue = digitalRead(photodiodePin);
@@ -55,20 +59,21 @@ void scanBarcode() {
     // Optional delay before reading again
     delay(1000);
   }
+ */
 
-  // Output the current value of the serial input
-//  for (int i = 0; i < arraySize; i++) {
-//    // Read and print the current serial input value
-//    while (!Serial.available()) {
-//      // Wait for serial input
-//    }
-//    int serialValue = Serial.read() - '0'; // Convert ASCII to integer
-//    Serial.print("Current Serial Input: ");
-//    Serial.println(serialValue);
-//
-//    // Add the serial input status to the array
-//    BinCode[i] = serialValue;
-//  }
+// Output the current value of the serial input
+  for (int i = 0; i < arraySize; i++) {
+    // Read and print the current serial input value
+    while (!Serial.available()) {
+      // Wait for serial input
+    }
+    int serialValue = Serial.read() - '0'; // Convert ASCII to integer
+    Serial.print("Current Serial Input: ");
+    Serial.println(serialValue);
+
+    // Add the serial input status to the array
+    BinCode[i] = serialValue;
+  }
 
 
 
@@ -109,17 +114,17 @@ void scanBarcode() {
   }
 }
 
-void Checksum() {
-  int odd = (decodedDigits[1] + decodedDigits[3] + decodedDigits[5] + decodedDigits[7])*3
-  int even = decodedDigits[2] + decodedDigits[4] + decodedDigits[6]
-  int checksum = (10-[(even + odd)%10]) % 10
-  if (checksum % 10 = 0){
-    decodedDigits[8] = 0
-  else {
-    decodedDigits[8] = checksum
-  }  
+void checkSum() {
+  int odd = (decodedDigits[0] + decodedDigits[2] + decodedDigits[4] + decodedDigits[6]) * 3;
+  int even = decodedDigits[1] + decodedDigits[3] + decodedDigits[5];
+  int checksum = (10 - ((even + odd) % 10)) % 10;
+  if (checksum % 10 == 0) {
+    decodedDigits[7] = 0;
+  } else {
+    decodedDigits[7] = checksum;
   }
 }
+
 
 
 // Function for the decoding of the binary information into 8-bit denary
@@ -147,8 +152,7 @@ void decodeBarcode() {
     return -1;  // If no match is found
   };
 
-  // Array to store the decoded digits
-  int decodedDigits[8];
+
 
   // Decode each digit and store in the array
   for (int i = 1; i <= 8; i++) {
@@ -180,7 +184,7 @@ void decodeBarcode() {
     }
   }
 
-
+checkSum();
 // Define a String variable to store concatenated digits
 String concatenatedDigits = "";
 // Concatenate all decoded digits into the variable
