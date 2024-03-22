@@ -12,7 +12,7 @@
 // The program outputs all the smaller arrays(for debugging purposes)
 // The program decodes all of the smaller arrays into decimal numbers
 // The program outputs the decimal number
-
+ 
 // Defining all global variables
 const int photodiodePin = 2;    // Digital pin where the photodiode is connected
 const int threshold = 500;      // Adjust this threshold based on your environment
