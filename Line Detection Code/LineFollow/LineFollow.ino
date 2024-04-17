@@ -16,8 +16,8 @@ void setup() {
 void loop() {
   Right = (analogRead(1) > threshhold);
   Left = (analogRead(0) > threshhold); // True when left sensor is off the line
-  servoLeft.writeMicroseconds(1570);  // Left wheel counterclockwise
-  servoRight.writeMicroseconds(1430); // Right wheel counterclockwise
+  servoLeft.writeMicroseconds(1570);  // Left wheel forwards
+  servoRight.writeMicroseconds(1430); // Right wheel forwards
 
   do{
     delay(1);
