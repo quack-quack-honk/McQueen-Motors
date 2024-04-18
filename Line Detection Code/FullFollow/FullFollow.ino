@@ -17,8 +17,8 @@ void setup() {
   do{ 
     updateSensors();
 
-    servoLeft.writeMicroseconds(1570);  // Left wheel forwards
-    servoRight.writeMicroseconds(1430); // Right wheel forwards
+    servoLeft.writeMicroseconds(1570);  // left wheel forwards
+    servoRight.writeMicroseconds(1430); // right wheel forwards
 
 
 
