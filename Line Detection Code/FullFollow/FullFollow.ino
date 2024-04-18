@@ -15,11 +15,7 @@ void setup() {
 
   //white on black following code
   do{ 
-    farLeft = digitalRead(6);
-    left = digitalRead(5);
-    centre = digitalRead(4);
-    right = digitalRead(3);
-    farRight = digitalRead(2);
+    updateSensors();
 
     servoLeft.writeMicroseconds(1570);  // Left wheel forwards
     servoRight.writeMicroseconds(1430); // Right wheel forwards
@@ -30,36 +26,23 @@ void setup() {
 
   //black on white following code
   do{ 
-    farLeft = digitalRead(6);
-    left = digitalRead(5);
-    centre = digitalRead(4);
-    right = digitalRead(3);
-    farRight = digitalRead(2);
-
-
+    updateSensors();
 
   }while(zone = 2);
 
   //barcode scanning code
   do{ 
-    farLeft = digitalRead(6);
-    left = digitalRead(5);
-    centre = digitalRead(4);
-    right = digitalRead(3);
-    farRight = digitalRead(2);
+    updateSensors();
+
+    //follow short black line then read barcode
+
 
 
   }while(zone = 3);
 
   //drive to stop position
   do{ 
-    farLeft = digitalRead(6);
-    left = digitalRead(5);
-    centre = digitalRead(4);
-    right = digitalRead(3);
-    farRight = digitalRead(2);
-
-
+    updateSensors();
 
   }while(zone = 4);
 
@@ -77,4 +60,12 @@ void setup() {
 void loop() {
   
 
+}
+
+void updateSensors(){
+  farLeft = digitalRead(6);
+  left = digitalRead(5);
+  centre = digitalRead(4);
+  right = digitalRead(3);
+  farRight = digitalRead(2);  
 }
