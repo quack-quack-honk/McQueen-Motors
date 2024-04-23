@@ -34,6 +34,7 @@ void alignRobot() {
       moveForward();
     }
 
+
     if (sensorValue1 == LOW && sensorValue5 == LOW) {
       stopMotors();
       break;
@@ -69,8 +70,8 @@ void rightPivot() {
 
 
 void moveForward() {
-  servoLeft.writeMicroseconds(1520);
-  servoRight.writeMicroseconds(1480);
+  servoLeft.writeMicroseconds(1555);
+  servoRight.writeMicroseconds(1430);
 }
 
 void turnLeft() {
@@ -79,13 +80,13 @@ void turnLeft() {
 }
 
 void curveLeft() {
-  servoLeft.writeMicroseconds(1700);  // Left wheel clockwise
-  servoRight.writeMicroseconds(1450); // Right wheel clockwise
+  servoLeft.writeMicroseconds(1490);  // left wheel stop
+  servoRight.writeMicroseconds(1450); // right wheel slow forward
 }
 
 void curveRight() {
-  servoLeft.writeMicroseconds(1550);  // Left wheel clockwise
-  servoRight.writeMicroseconds(1300); // Right wheel clockwise
+  servoLeft.writeMicroseconds(1525); // left wheel slow forward
+  servoRight.writeMicroseconds(1500); // right wheel stop
 }
 
 void turnRight() {
