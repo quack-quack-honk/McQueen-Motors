@@ -26,7 +26,7 @@ void setup() {
 
 void moveForward() {
   servoLeft.writeMicroseconds(1600);
-  servoRight.writeMicroseconds(1300);
+  servoRight.writeMicroseconds(1350);
 }
 
 void turnLeft() {
