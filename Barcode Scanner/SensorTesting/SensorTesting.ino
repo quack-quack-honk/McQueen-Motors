@@ -22,7 +22,7 @@ void loop() {
   int sensorValue3 = digitalRead(photodiodePin3);  // Read the digital value from the photodiode
   int sensorValue4 = digitalRead(photodiodePin4);  // Read the digital value from the photodiode
   int sensorValue5 = digitalRead(photodiodePin5);  // Read the digital value from the photodiode
-
+/*
   Serial.print("Sensor Value1: ");
   Serial.println(sensorValue1);  // Print the sensor value to the serial monitor
   Serial.print("Sensor Value2: ");
@@ -32,9 +32,9 @@ void loop() {
   Serial.print("Sensor Value4: ");
   Serial.println(sensorValue4);  // Print the sensor value to the serial monitor
   Serial.print("Sensor Value5: ");
+*/
   Serial.println(sensorValue5);  // Print the sensor value to the serial monitor
-  Serial.print("\n");
-
+//  Serial.print("\n");
 
 
   delay(1000);  // Delay for 1 second before reading again
