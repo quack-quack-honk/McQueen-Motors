@@ -18,15 +18,15 @@ void setup() {
   servoLeft.attach(13);
   servoRight.attach(12);
   moveForward();
-  delay(10000);
+  delay(4000);
   stopMotors();
 }
 
 
 
 void moveForward() {
-  servoLeft.writeMicroseconds(1600);
-  servoRight.writeMicroseconds(1350);
+  servoLeft.writeMicroseconds(1575);
+  servoRight.writeMicroseconds(1410);
 }
 
 void turnLeft() {
