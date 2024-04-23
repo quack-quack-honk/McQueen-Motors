@@ -15,7 +15,7 @@
 
 
 // Defining all global variables
-const int sensorPin = 2;    // Digital pin where the photodiode is connected
+const int sensorPin = 5;    // Digital pin where the photodiode is connected
 const int threshold = 500;      // Adjust this threshold based on your environment
 const int arraySize = 67;  // Defining how long the barcode will be
 bool BinCode[arraySize];   // Array containing the whole binary sequence for the barcode
@@ -30,18 +30,23 @@ bool DBit4[7];             // Contains binary information for the 4th denary bit
 bool DBit5[7];             // Contains binary information for the 5th denary bit
 bool DBit6[7];             // Contains binary information for the 6th denary bit
 bool DBit7[7];             // Contains binary information for the 7th denary bit
-bool DBit8[7];             // Contains binary information for the 8th denary bit //RESEARCH ON CHECKSUM AND MAKE SURE THIS IS DONE CORRECTLY
+bool DBit8[7];             // Contains binary information for the 8th denary bit
 
 // Initialising the LED display
 #include <LiquidCrystal_I2C.h>
 LiquidCrystal_I2C lcd(0x27, 16, 2); // I2C address 0x27, 16 column and 2 rows
-
+#include <Servo.h>
+Servo servoLeft;
+Servo servoRight;
 
 // Function to collect data from sensor and sort into arrays accordingly
 // Takes data inputted from sensor/button and creates an array
 // 2 new arrays created to separate the data bits
 // If the barcode is the opposite way around then the data should be sorted accordingly into right and left
 void scanBarcode() {
+  servoLeft.writeMicroseconds(1555);  // left wheel forwards
+  servoRight.writeMicroseconds(1430); // right wheel forwards
+  
   for (int i = 0; i < arraySize; i++) {
     // Read and print the current sensor input value
     int sensorValue = digitalRead(sensorPin);
@@ -52,8 +57,9 @@ void scanBarcode() {
     BinCode[i] = sensorValue;
 
     // Optional delay before reading again
-    delay(1000);
+    delay(72);
   }
+  stopMotors();
 
 
 /*
@@ -81,7 +87,7 @@ void scanBarcode() {
     delay(2000);  // Wait for 2 seconds
     // Clear the array
     memset(BinCode, 0, sizeof(BinCode));
-    scanBarcode();  // Call the function recursively for a new scan
+//    scanBarcode();  // Call the function recursively for a new scan
   }
 
   // Split BinCode into two subarrays
@@ -106,7 +112,7 @@ void scanBarcode() {
     Serial.println("Invalid Subarrays");
     // You may add additional logic or handling for invalid cases
     memset(BinCode, 0, sizeof(BinCode));
-    scanBarcode();  // Call the function recursively for a new scan
+//    scanBarcode();  // Call the function recursively for a new scan
   }
 }
 
@@ -310,6 +316,8 @@ void setup() {
   //start serial connection
   Serial.begin(9600);
   pinMode(sensorPin, INPUT);  // Set the photodiode pin as input
+  servoLeft.attach(13);
+  servoRight.attach(12);
 
   lcd.init(); // initialize the lcd
   lcd.backlight();
@@ -318,11 +326,17 @@ void setup() {
   scanBarcode();
   barcodeOutput();
   decodeBarcode();
+
 }
 
 void moveForward() {
   servoLeft.writeMicroseconds(1700);
   servoRight.writeMicroseconds(1300);
+}
+
+void stopMotors() {
+  servoLeft.detach();
+  servoRight.detach();
 }
 
 // Function for repetitive tasks
