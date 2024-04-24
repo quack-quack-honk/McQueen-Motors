@@ -1,9 +1,8 @@
-const int sensorPin1 = 1;
-const int sensorPin2 = 2;
-const int sensorPin3 = 3;
-const int sensorPin4 = 4;
-const int sensorPin5 = 5;
-const int threshold = 800;
+const int sensorPin1 = 2;
+const int sensorPin2 = 3;
+const int sensorPin3 = 4;
+const int sensorPin4 = 5;
+const int sensorPin5 = 6;
 #include <Servo.h>
 Servo servoLeft;
 Servo servoRight;
@@ -20,28 +19,26 @@ void setup() {
   alignRobot();
 }
 
-  int sensorValue1 = digitalRead(sensorPin1);
-  int sensorValue5 = digitalRead(sensorPin5);
-
 void alignRobot() {
   while (true) {
+    int sensorValue1 = digitalRead(sensorPin1);
+    int sensorValue5 = digitalRead(sensorPin5);
+
     Serial.print("Sensor Value1: ");
     Serial.println(sensorValue1);
     Serial.print("Sensor Value5: ");
     Serial.println(sensorValue5);
     
-    while(sensorValue1 == HIGH && sensorValue5 == HIGH){
+    if (sensorValue1 && sensorValue5){
       moveForward();
     }
-
-
-    if (sensorValue1 == LOW && sensorValue5 == LOW) {
+    else if (sensorValue1 == LOW && sensorValue5 == LOW) {
       stopMotors();
       break;
-    } else if (sensorValue1){
+    } else if (sensorValue1 && !sensorValue5){
         leftPivot();
         // create code so that robot pivots around the sensor
-    } else if (sensorValue5){
+    } else if (sensorValue5 && !sensorValue1){
         rightPivot();
         // create code so that robot pivots around the sensor
     }
@@ -49,59 +46,72 @@ void alignRobot() {
 }
 
 void leftPivot() {
+
+  int sensorValue1 = digitalRead(sensorPin1);
+  int sensorValue5 = digitalRead(sensorPin5);
   while (sensorValue1 == LOW && sensorValue5 == HIGH) {
-  // modify wheel speeds so robot pivots around sensor
-  }
+    int sensorValue1 = digitalRead(sensorPin1);
+    int sensorValue5 = digitalRead(sensorPin5);
+    curveLeft();
+    delay(500);
+
+}
   moveBackward();
-  delay(1000);
+  delay(500);
   alignRobot();
 }
 
 void rightPivot() {
+  int sensorValue1 = digitalRead(sensorPin1);
+  int sensorValue5 = digitalRead(sensorPin5);
+
   while (sensorValue1 == HIGH && sensorValue5 == LOW) {
-  // modify wheel speeds so robot pivots around sensor
-  }
+    int sensorValue1 = digitalRead(sensorPin1);
+    int sensorValue5 = digitalRead(sensorPin5);
+    curveRight();
+    delay(500);
+
+}
   moveBackward();
-  delay(1000);
+  delay(500);
   alignRobot();
 }
 
-
-
-
 void moveForward() {
-  servoLeft.writeMicroseconds(1555);
-  servoRight.writeMicroseconds(1430);
-}
-
-void turnLeft() {
-  servoLeft.writeMicroseconds(1300);  // Left wheel clockwise
-  servoRight.writeMicroseconds(1300); // Right wheel clockwise
+  servoLeft.writeMicroseconds(1505);
+  servoRight.writeMicroseconds(1465);
 }
 
 void curveLeft() {
   servoLeft.writeMicroseconds(1490);  // left wheel stop
-  servoRight.writeMicroseconds(1450); // right wheel slow forward
+  servoRight.writeMicroseconds(1480); // right wheel slow forward
 }
 
 void curveRight() {
-  servoLeft.writeMicroseconds(1525); // left wheel slow forward
-  servoRight.writeMicroseconds(1500); // right wheel stop
+  servoLeft.writeMicroseconds(1505); // left wheel slow forward
+  servoRight.writeMicroseconds(1495); // right wheel stop
+}
+
+/*
+void turnLeft() {
+  servoLeft.writeMicroseconds(1300);  // Left wheel clockwise
+  servoRight.writeMicroseconds(1300); // Right wheel clockwise
 }
 
 void turnRight() {
   servoLeft.writeMicroseconds(1700);  // Left wheel counterclockwise
   servoRight.writeMicroseconds(1700); // Right wheel counterclockwise
 }
+*/
 
 void moveBackward() {
-  servoLeft.writeMicroseconds(1300);  // Left wheel clockwise
-  servoRight.writeMicroseconds(1700); // Right wheel counterclockwise
+  servoLeft.writeMicroseconds(1465);  // Left wheel clockwise
+  servoRight.writeMicroseconds(1517); // Right wheel counterclockwise
 }
 
 void stopMotors() {
-  servoLeft.detach();
-  servoRight.detach();
+  servoLeft.writeMicroseconds(1490);  // Left wheel clockwise
+  servoRight.writeMicroseconds(1500); // Right wheel clockwise
 }
 
 void loop() {
