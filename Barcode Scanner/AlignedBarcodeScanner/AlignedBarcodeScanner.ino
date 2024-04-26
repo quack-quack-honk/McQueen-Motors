@@ -1,4 +1,3 @@
-// CHECKSUM NEEDS TO BE ADDED IN
 // IF THE BARCODE IS BEING READ BACKWARDS THEN ALL THE VALUES IN LEFTSIDE AND RIGHTSIDE SHOULD BE FLIPPED RATHER THAN THE ARRAYS BEING SWAPPED
 // THE DELAY BETWEEN SCANS OF THE SENSOR STATUS MUST BE ADAPTED BASED ON THE SIZE OF REAL BARCODE
 
@@ -20,7 +19,6 @@ const int sensorPin2 = 3;
 const int sensorPin3 = 4;
 const int sensorPin4 = 5;
 const int sensorPin5 = 6;
-const int threshold = 500;      // Adjust this threshold based on your environment
 const int arraySize = 67;  // Defining how long the barcode will be
 bool BinCode[arraySize];   // Array containing the whole binary sequence for the barcode
 bool SubArray1[28];        // Splits the first half of BinCode, removing identifier bits
@@ -39,6 +37,7 @@ bool DBit8[7];             // Contains binary information for the 8th denary bit
 // Initialising the LED display
 #include <LiquidCrystal_I2C.h>
 LiquidCrystal_I2C lcd(0x27, 16, 2); // I2C address 0x27, 16 column and 2 rows
+// Initialising the Servo Motors
 #include <Servo.h>
 Servo servoLeft;
 Servo servoRight;
@@ -50,7 +49,8 @@ Servo servoRight;
 void scanBarcode() {
   servoLeft.writeMicroseconds(1555);  // left wheel forwards
   servoRight.writeMicroseconds(1430); // right wheel forwards
-  
+
+
   for (int i = 0; i < arraySize; i++) {
     // Read and print the current sensor input value
     int sensorValue = digitalRead(sensorPin5);
@@ -82,7 +82,6 @@ void scanBarcode() {
   }
 */
 
-
   // Check the first three digits of the array
   if (!(BinCode[0] == 1 && BinCode[1] == 0 && BinCode[2] == 1
       &&BinCode[64] == 1 && BinCode[65] == 0 && BinCode[66] == 1
@@ -90,7 +89,7 @@ void scanBarcode() {
     Serial.println("Invalid identifiers");
     delay(2000);  // Wait for 2 seconds
     // Clear the array
-    memset(BinCode, 0, sizeof(BinCode));
+//    memset(BinCode, 0, sizeof(BinCode));
 //    scanBarcode();  // Call the function recursively for a new scan
   }
 
@@ -309,7 +308,6 @@ void barcodeOutput() {
   Serial.println();
 }
 
-
 void alignRobot() {
   while (true) {
     int sensorValue1 = digitalRead(sensorPin1);
@@ -363,8 +361,8 @@ void rightPivot() {
 }
 
 void edgeForward() {
-  servoLeft.writeMicroseconds(1505);
-  servoRight.writeMicroseconds(1465);
+  servoLeft.writeMicroseconds(1500);
+  servoRight.writeMicroseconds(1485);
 }
 
 void curveLeft() {
@@ -390,9 +388,10 @@ void turnRight() {
 */
 
 void moveBackward() {
-  servoLeft.writeMicroseconds(1465);  // Left wheel clockwise
+  servoLeft.writeMicroseconds(1475);  // Left wheel clockwise
   servoRight.writeMicroseconds(1517); // Right wheel counterclockwise
 }
+
 /*
 void stopMotors() {
   servoLeft.writeMicroseconds(1490);  // Left wheel clockwise
