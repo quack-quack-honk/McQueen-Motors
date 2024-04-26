@@ -1,4 +1,3 @@
-// CHECKSUM NEEDS TO BE ADDED IN
 // IF THE BARCODE IS BEING READ BACKWARDS THEN ALL THE VALUES IN LEFTSIDE AND RIGHTSIDE SHOULD BE FLIPPED RATHER THAN THE ARRAYS BEING SWAPPED
 // THE DELAY BETWEEN SCANS OF THE SENSOR STATUS MUST BE ADAPTED BASED ON THE SIZE OF REAL BARCODE
 
@@ -46,7 +45,8 @@ Servo servoRight;
 void scanBarcode() {
   servoLeft.writeMicroseconds(1555);  // left wheel forwards
   servoRight.writeMicroseconds(1430); // right wheel forwards
-  
+
+
   for (int i = 0; i < arraySize; i++) {
     // Read and print the current sensor input value
     int sensorValue = digitalRead(sensorPin);
@@ -78,7 +78,6 @@ void scanBarcode() {
   }
 */
 
-
   // Check the first three digits of the array
   if (!(BinCode[0] == 1 && BinCode[1] == 0 && BinCode[2] == 1
       &&BinCode[64] == 1 && BinCode[65] == 0 && BinCode[66] == 1
@@ -86,7 +85,7 @@ void scanBarcode() {
     Serial.println("Invalid identifiers");
     delay(2000);  // Wait for 2 seconds
     // Clear the array
-    memset(BinCode, 0, sizeof(BinCode));
+//    memset(BinCode, 0, sizeof(BinCode));
 //    scanBarcode();  // Call the function recursively for a new scan
   }
 
@@ -326,7 +325,6 @@ void setup() {
   scanBarcode();
   barcodeOutput();
   decodeBarcode();
-
 }
 
 void moveForward() {
@@ -339,7 +337,7 @@ void stopMotors() {
   servoRight.detach();
 }
 
-// Function for repetitive tasks
+
 void loop() {
 }
 
