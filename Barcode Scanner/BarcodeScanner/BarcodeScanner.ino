@@ -57,7 +57,7 @@ void scanBarcode() {
     BinCode[i] = sensorValue;
 
     // Optional delay before reading again
-    delay(72);
+    delay(68);
   }
   stopMotors();
 
