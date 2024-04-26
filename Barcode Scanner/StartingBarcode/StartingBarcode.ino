@@ -16,7 +16,8 @@ void setup() {
   pinMode(sensorPin5, INPUT);
   servoLeft.attach(13);
   servoRight.attach(12);
-  alignRobot();
+  //alignRobot();
+  moveForward();
 }
 
 void alignRobot() {
@@ -76,9 +77,14 @@ void rightPivot() {
   alignRobot();
 }
 
+void edgeForward() {
+  servoLeft.writeMicroseconds(1500);
+  servoRight.writeMicroseconds(1485);
+}
+
 void moveForward() {
-  servoLeft.writeMicroseconds(1505);
-  servoRight.writeMicroseconds(1465);
+  servoLeft.writeMicroseconds(1555);  // left wheel forwards
+  servoRight.writeMicroseconds(1420); // right wheel forwards
 }
 
 void curveLeft() {
@@ -104,7 +110,7 @@ void turnRight() {
 */
 
 void moveBackward() {
-  servoLeft.writeMicroseconds(1465);  // Left wheel clockwise
+  servoLeft.writeMicroseconds(1475);  // Left wheel clockwise
   servoRight.writeMicroseconds(1517); // Right wheel counterclockwise
 }
 
