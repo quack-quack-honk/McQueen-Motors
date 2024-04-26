@@ -46,7 +46,6 @@ void alignRobot() {
 }
 
 void leftPivot() {
-
   int sensorValue1 = digitalRead(sensorPin1);
   int sensorValue5 = digitalRead(sensorPin5);
   while (sensorValue1 == LOW && sensorValue5 == HIGH) {
