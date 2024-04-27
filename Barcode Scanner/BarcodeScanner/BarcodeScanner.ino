@@ -43,10 +43,10 @@ Servo servoRight;
 // 2 new arrays created to separate the data bits
 // If the barcode is the opposite way around then the data should be sorted accordingly into right and left
 void scanBarcode() {
-  servoLeft.writeMicroseconds(1555);  // left wheel forwards
-  servoRight.writeMicroseconds(1430); // right wheel forwards
-
-
+//  servoLeft.writeMicroseconds(1555);  // left wheel forwards
+//  servoRight.writeMicroseconds(1430); // right wheel forwards
+  stopMotors();
+/*
   for (int i = 0; i < arraySize; i++) {
     // Read and print the current sensor input value
     int sensorValue = digitalRead(sensorPin);
@@ -60,9 +60,9 @@ void scanBarcode() {
     delay(68);
   }
   stopMotors();
+*/
 
 
-/*
   // Output the current value of the serial input
   for (int i = 0; i < arraySize; i++) {
     // Read and print the current serial input value
@@ -76,7 +76,7 @@ void scanBarcode() {
     // Add the serial input status to the array
     BinCode[i] = serialValue;
   }
-*/
+
 
   // Check the first three digits of the array
   if (!(BinCode[0] == 1 && BinCode[1] == 0 && BinCode[2] == 1
