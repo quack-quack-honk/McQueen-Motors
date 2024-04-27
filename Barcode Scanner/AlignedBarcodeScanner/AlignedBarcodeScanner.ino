@@ -337,8 +337,7 @@ void leftPivot() {
     int sensorValue5 = digitalRead(sensorPin5);
     curveLeft();
     delay(500);
-
-}
+  }
   moveBackward();
   delay(500);
   alignRobot();
@@ -399,8 +398,6 @@ void stopMotors() {
 }
 */
 
-
-
 // Main function for the code
 // Initialises relavent features
 // Calls function to scan the barcode and create arrays
@@ -421,7 +418,6 @@ void setup() {
 
   alignRobot();
   // Perform the barcode scanning
-  scanBarcode();
   barcodeOutput();
   decodeBarcode();
 }
@@ -439,4 +435,3 @@ void stopMotors() {
 // Function for repetitive tasks
 void loop() {
 }
-
