@@ -41,6 +41,26 @@ LiquidCrystal_I2C lcd(0x27, 16, 2); // I2C address 0x27, 16 column and 2 rows
 Servo servoLeft;
 Servo servoRight;
 
+// Main function for the code
+// Initialises relavent features
+// Calls function to align barcode
+void setup() {
+  //start serial connection
+  Serial.begin(9600);
+  pinMode(sensorPin1, INPUT);
+  pinMode(sensorPin2, INPUT);
+  pinMode(sensorPin3, INPUT);
+  pinMode(sensorPin4, INPUT);
+  pinMode(sensorPin5, INPUT);
+
+  servoLeft.attach(13);
+  servoRight.attach(12);
+ 
+  lcd.init(); // initialize the lcd
+  lcd.backlight();
+  
+  alignRobot();
+}
 
 // Function to drive over barcode and collect data to put into an array
 // Robot drives for a specified time which corresponds to the length of the barcode
@@ -62,7 +82,7 @@ void scanBarcode() {
     delay(68);
   }
   stopMotors();
-
+  validateBarcode();
 
 /*
   // Output the current value of the serial input
@@ -146,7 +166,7 @@ void decodeBarcode() {
     } else {
       decodedDigits[i - 1] = -1;  // Indicates an error
       Serial.println("Not a valid barcode");
-      scanReversedBarcode();
+      reverseBarcode();
       return;  // Exit the function since it's not a valid barcode
     }
   }
@@ -167,26 +187,6 @@ void decodeBarcode() {
   delay(2000);                 // display the above for two seconds
 }
 
-void scanReversedBarcode(){
-  reverseArray(BinCode, 67);
-    for (int i = 0; i < 67; i++) {
-    Serial.print(BinCode[i]);
-    Serial.print(" ");
-  }
-  Serial.println();
-  validateBarcode();
-}
-
-// Function to reverse the given array
-void reverseArray(bool* arr, int size) {
-  for (int i = 0; i < size / 2; i++) {
-    bool temp = arr[i];
-    arr[i] = arr[size - i - 1];
-    arr[size - i - 1] = temp;
-  }
-}
-
-
 void barcodeOutput() {
   // Print the array values to the Serial Monitor at the end
   Serial.println("Binary Barcode: ");
@@ -195,7 +195,7 @@ void barcodeOutput() {
   }
   Serial.println();
 
-  // Print the LeftSide and RightSide arrays
+  // Create and print the LeftSide array
   Serial.println("LeftSide: ");
   memcpy(LeftSide, BinCode + 3, 28 * sizeof(bool));
   for (int i = 0; i < 28; i++) {
@@ -277,6 +277,24 @@ void barcodeOutput() {
   decodeBarcode();
 }
 
+void reverseBarcode(){
+  reverseArray(BinCode, 67);
+    for (int i = 0; i < 67; i++) {
+    Serial.print(BinCode[i]);
+    Serial.print(" ");
+  }
+  Serial.println();
+  validateBarcode();
+}
+
+// Function to reverse the given array
+void reverseArray(bool* arr, int size) {
+  for (int i = 0; i < size / 2; i++) {
+    bool temp = arr[i];
+    arr[i] = arr[size - i - 1];
+    arr[size - i - 1] = temp;
+  }
+}
 
 void alignRobot() {
   while (true) {
@@ -285,48 +303,17 @@ void alignRobot() {
     
     if (sensorValue1 && sensorValue5){
       edgeForward();
-    }
-    else if (sensorValue1 == LOW && sensorValue5 == LOW) {
-      scanBarcode();
-      break;
+    } else if (!sensorValue1 && !sensorValue5) {
+      stopMotors();
+      //scanBarcode();
     } else if (sensorValue1 && !sensorValue5){
-        leftPivot();
-        // create code so that robot pivots around the sensor
+      reverseRight();
+      // create code so that robot pivots around the sensor
     } else if (sensorValue5 && !sensorValue1){
-        rightPivot();
-        // create code so that robot pivots around the sensor
+      reverseLeft();
+      // create code so that robot pivots around the sensor
     }
   }
-}
-
-void leftPivot() {
-  int sensorValue1 = digitalRead(sensorPin1);
-  int sensorValue5 = digitalRead(sensorPin5);
-  while (sensorValue1 == LOW && sensorValue5 == HIGH) {
-    int sensorValue1 = digitalRead(sensorPin1);
-    int sensorValue5 = digitalRead(sensorPin5);
-    curveLeft();
-    delay(500);
-  }
-  moveBackward();
-  delay(500);
-  alignRobot();
-}
-
-void rightPivot() {
-  int sensorValue1 = digitalRead(sensorPin1);
-  int sensorValue5 = digitalRead(sensorPin5);
-
-  while (sensorValue1 == HIGH && sensorValue5 == LOW) {
-    int sensorValue1 = digitalRead(sensorPin1);
-    int sensorValue5 = digitalRead(sensorPin5);
-    curveRight();
-    delay(500);
-
-}
-  moveBackward();
-  delay(500);
-  alignRobot();
 }
 
 void edgeForward() {
@@ -344,17 +331,15 @@ void curveRight() {
   servoRight.writeMicroseconds(1495); // right wheel stop
 }
 
-/*
-void turnLeft() {
-  servoLeft.writeMicroseconds(1300);  // Left wheel clockwise
-  servoRight.writeMicroseconds(1300); // Right wheel clockwise
+void reverseLeft() {
+  servoLeft.writeMicroseconds(1480); 
+  servoRight.writeMicroseconds(1517);
 }
 
-void turnRight() {
-  servoLeft.writeMicroseconds(1700);  // Left wheel counterclockwise
-  servoRight.writeMicroseconds(1700); // Right wheel counterclockwise
+void reverseRight() {
+  servoLeft.writeMicroseconds(1470); 
+  servoRight.writeMicroseconds(1510); 
 }
-*/
 
 void moveBackward() {
   servoLeft.writeMicroseconds(1475);  // Left wheel clockwise
@@ -367,28 +352,6 @@ void stopMotors() {
   servoRight.writeMicroseconds(1500); // Right wheel clockwise
 }
 */
-
-// Main function for the code
-// Initialises relavent features
-// Calls function to scan the barcode and create arrays
-// Prints all relavent arrays
-// Calls function to decode the relavent arrays
-void setup() {
-  //start serial connection
-  Serial.begin(9600);
-  pinMode(sensorPin1, INPUT);
-  pinMode(sensorPin2, INPUT);
-  pinMode(sensorPin3, INPUT);
-  pinMode(sensorPin4, INPUT);
-  pinMode(sensorPin5, INPUT);
-  servoLeft.attach(13);
-  servoRight.attach(12);
-  lcd.init(); // initialize the lcd
-  lcd.backlight();
-
-  alignRobot();
-  // Perform the barcode scanning
-}
 
 void moveForward() {
   servoLeft.writeMicroseconds(1700);
