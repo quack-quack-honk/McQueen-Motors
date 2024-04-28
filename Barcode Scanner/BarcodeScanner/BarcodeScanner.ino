@@ -46,6 +46,7 @@ void scanBarcode() {
 //  servoLeft.writeMicroseconds(1555);  // left wheel forwards
 //  servoRight.writeMicroseconds(1430); // right wheel forwards
   stopMotors();
+
 /*
   for (int i = 0; i < arraySize; i++) {
     // Read and print the current sensor input value
@@ -78,7 +79,7 @@ void scanBarcode() {
   }
 
 
-  // Check the first three digits of the array
+  // Check the identifier digits of the array
   if (!(BinCode[0] == 1 && BinCode[1] == 0 && BinCode[2] == 1
       &&BinCode[64] == 1 && BinCode[65] == 0 && BinCode[66] == 1
       &&BinCode[31] == 0 && BinCode[32] == 1 && BinCode[33] == 0 && BinCode[34] == 1 && BinCode[35] == 0)) {
@@ -89,33 +90,33 @@ void scanBarcode() {
 //    scanBarcode();  // Call the function recursively for a new scan
   }
 
-  // Split BinCode into two subarrays
-  memcpy(SubArray1, BinCode + 3, 28 * sizeof(bool));
-  memcpy(SubArray2, BinCode + 36, 28 * sizeof(bool));  // Modified starting index
+    // Split BinCode into two subarrays
+  memcpy(LeftSide, BinCode + 3, 28 * sizeof(bool));
+  memcpy(RightSide, BinCode + 36, 28 * sizeof(bool));  // Modified starting index
 
 
-
+/*
   // Check and assign subarrays to LeftSide and RightSide
   if (SubArray1[0], SubArray1[7], SubArray1[14], SubArray1[21] == 0 && SubArray2[0], SubArray2[7], SubArray2[14], SubArray2[21] == 1) {
     memcpy(LeftSide, SubArray1, 28 * sizeof(bool));
     memcpy(RightSide, SubArray2, 28 * sizeof(bool));
+
   } else if (SubArray2[0], SubArray2[7], SubArray2[14], SubArray2[21] == 0 && SubArray1[0], SubArray1[7], SubArray1[14], SubArray1[21] == 1) {
     // Reverse BinCode before copying
     reverseArray(BinCode + 3, 23);
     reverseArray(BinCode + 31, 31);
-
     // Copy reversed sections to LeftSide and RightSide
     memcpy(LeftSide, BinCode + 3, 28 * sizeof(bool));
     memcpy(RightSide, BinCode + 31, 28 * sizeof(bool));
+
   } else {
     Serial.println("Invalid Subarrays");
-    // You may add additional logic or handling for invalid cases
     memset(BinCode, 0, sizeof(BinCode));
 //    scanBarcode();  // Call the function recursively for a new scan
   }
 }
-
-
+*/
+}
 
 // Function for the decoding of the binary information into 8-bit denary
 // Encoding key is defined
@@ -171,10 +172,10 @@ void decodeBarcode() {
     } else {
       decodedDigits[i - 1] = -1;  // Indicates an error
       Serial.println("Not a valid barcode");
+      scanReversedBarcode();
       return;  // Exit the function since it's not a valid barcode
     }
   }
-
 
   // Define a String variable to store concatenated digits
   String concatenatedDigits = "";
@@ -193,6 +194,15 @@ void decodeBarcode() {
 
 }
 
+void scanReversedBarcode(){
+  reverseArray(BinCode, 67);
+    for (int i = 0; i < 67; i++) {
+    Serial.print(BinCode[i]);
+    Serial.print(" ");
+  }
+  Serial.println();
+  decodeBarcode();
+}
 
 // Function to reverse the given array
 void reverseArray(bool* arr, int size) {
