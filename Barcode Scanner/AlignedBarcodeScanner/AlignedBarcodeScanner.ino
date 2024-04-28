@@ -20,11 +20,9 @@ const int sensorPin3 = 4;
 const int sensorPin4 = 5;
 const int sensorPin5 = 6;
 const int arraySize = 67;  // Defining how long the barcode will be
-bool BinCode[arraySize];   // Array containing the whole binary sequence for the barcode
-bool SubArray1[28];        // Splits the first half of BinCode, removing identifier bits
-bool SubArray2[28];        // Splits the second half of BinCode, removing identifier bits
-bool LeftSide[28];         // Checks which direction barcode is being read from //AND NEEDS TO BE MODIFIED TO FLIP DATA IF NECESSARY
-bool RightSide[28];        // Checks which direction barcode is being read from //AND NEEDS TO BE MODIFIED TO FLIP DATA IF NECESSARY
+bool BinCode[arraySize];   // Array containing the whole binary sequence for the barcode       
+bool LeftSide[28];         // Splits the first half of BinCode, removing identifier bits
+bool RightSide[28];        // Splits the second half of BinCode, removing identifier bits
 bool DBit1[7];             // Contains binary information for the 1st denary bit
 bool DBit2[7];             // Contains binary information for the 2nd denary bit
 bool DBit3[7];             // Contains binary information for the 3rd denary bit
@@ -32,28 +30,28 @@ bool DBit4[7];             // Contains binary information for the 4th denary bit
 bool DBit5[7];             // Contains binary information for the 5th denary bit
 bool DBit6[7];             // Contains binary information for the 6th denary bit
 bool DBit7[7];             // Contains binary information for the 7th denary bit
-bool DBit8[7];             // Contains binary information for the 8th denary bit
+bool DBit8[7];             // Contains binary information for the 8th denary bit which is also checksum bit
 
 // Initialising the LED display
 #include <LiquidCrystal_I2C.h>
 LiquidCrystal_I2C lcd(0x27, 16, 2); // I2C address 0x27, 16 column and 2 rows
+
 // Initialising the Servo Motors
 #include <Servo.h>
 Servo servoLeft;
 Servo servoRight;
 
-// Function to collect data from sensor and sort into arrays accordingly
+
+// Function to drive over barcode and collect data to put into an array
+// Robot drives for a specified time which corresponds to the length of the barcode
 // Takes data inputted from sensor/button and creates an array
-// 2 new arrays created to separate the data bits
-// If the barcode is the opposite way around then the data should be sorted accordingly into right and left
 void scanBarcode() {
   servoLeft.writeMicroseconds(1555);  // left wheel forwards
   servoRight.writeMicroseconds(1430); // right wheel forwards
 
-
   for (int i = 0; i < arraySize; i++) {
     // Read and print the current sensor input value
-    int sensorValue = digitalRead(sensorPin5);
+    int sensorValue = digitalRead(sensorPin3);
     Serial.print("Sensor Value: ");
     Serial.println(sensorValue);
 
@@ -80,46 +78,19 @@ void scanBarcode() {
     // Add the serial input status to the array
     BinCode[i] = serialValue;
   }
+  validateBarcode();
 */
+}
 
-  // Check the first three digits of the array
+void validateBarcode() {
+  // Check the identifier digits of the array
   if (!(BinCode[0] == 1 && BinCode[1] == 0 && BinCode[2] == 1
       &&BinCode[64] == 1 && BinCode[65] == 0 && BinCode[66] == 1
       &&BinCode[31] == 0 && BinCode[32] == 1 && BinCode[33] == 0 && BinCode[34] == 1 && BinCode[35] == 0)) {
     Serial.println("Invalid identifiers");
-    delay(2000);  // Wait for 2 seconds
-    // Clear the array
-//    memset(BinCode, 0, sizeof(BinCode));
-//    scanBarcode();  // Call the function recursively for a new scan
   }
-
-  // Split BinCode into two subarrays
-  memcpy(SubArray1, BinCode + 3, 28 * sizeof(bool));
-  memcpy(SubArray2, BinCode + 36, 28 * sizeof(bool));  // Modified starting index
-
-
-
-  // Check and assign subarrays to LeftSide and RightSide
-  if (SubArray1[0], SubArray1[7], SubArray1[14], SubArray1[21] == 0 && SubArray2[0], SubArray2[7], SubArray2[14], SubArray2[21] == 1) {
-    memcpy(LeftSide, SubArray1, 28 * sizeof(bool));
-    memcpy(RightSide, SubArray2, 28 * sizeof(bool));
-  } else if (SubArray2[0], SubArray2[7], SubArray2[14], SubArray2[21] == 0 && SubArray1[0], SubArray1[7], SubArray1[14], SubArray1[21] == 1) {
-    // Reverse BinCode before copying
-    reverseArray(BinCode + 3, 23);
-    reverseArray(BinCode + 31, 31);
-
-    // Copy reversed sections to LeftSide and RightSide
-    memcpy(LeftSide, BinCode + 3, 28 * sizeof(bool));
-    memcpy(RightSide, BinCode + 31, 28 * sizeof(bool));
-  } else {
-    Serial.println("Invalid Subarrays");
-    // You may add additional logic or handling for invalid cases
-    memset(BinCode, 0, sizeof(BinCode));
-//    scanBarcode();  // Call the function recursively for a new scan
-  }
+  barcodeOutput();
 }
-
-
 
 // Function for the decoding of the binary information into 8-bit denary
 // Encoding key is defined
@@ -175,10 +146,10 @@ void decodeBarcode() {
     } else {
       decodedDigits[i - 1] = -1;  // Indicates an error
       Serial.println("Not a valid barcode");
+      scanReversedBarcode();
       return;  // Exit the function since it's not a valid barcode
     }
   }
-
 
   // Define a String variable to store concatenated digits
   String concatenatedDigits = "";
@@ -194,9 +165,17 @@ void decodeBarcode() {
   lcd.setCursor(2, 1);         // move cursor to   (2, 1)
   lcd.print(concatenatedDigits); // print message at (2, 1)
   delay(2000);                 // display the above for two seconds
-
 }
 
+void scanReversedBarcode(){
+  reverseArray(BinCode, 67);
+    for (int i = 0; i < 67; i++) {
+    Serial.print(BinCode[i]);
+    Serial.print(" ");
+  }
+  Serial.println();
+  validateBarcode();
+}
 
 // Function to reverse the given array
 void reverseArray(bool* arr, int size) {
@@ -216,22 +195,9 @@ void barcodeOutput() {
   }
   Serial.println();
 
-  // Print the first subarray
-  Serial.println("SubArray1: ");
-  for (int i = 0; i < 28; i++) {
-    Serial.print(SubArray1[i]);
-  }
-  Serial.println();
-
-  // Print the second subarray
-  Serial.println("SubArray2: ");
-  for (int i = 0; i < 28; i++) {
-    Serial.print(SubArray2[i]);
-  }
-  Serial.println();
-
   // Print the LeftSide and RightSide arrays
   Serial.println("LeftSide: ");
+  memcpy(LeftSide, BinCode + 3, 28 * sizeof(bool));
   for (int i = 0; i < 28; i++) {
     Serial.print(LeftSide[i]);
   }
@@ -270,6 +236,7 @@ void barcodeOutput() {
   Serial.println();
 
   Serial.println("RightSide: ");
+  memcpy(RightSide, BinCode + 36, 28 * sizeof(bool));
   for (int i = 0; i < 28; i++) {
     Serial.print(RightSide[i]);
   }
@@ -306,7 +273,10 @@ void barcodeOutput() {
     Serial.print(DBit8[i]);
   }
   Serial.println();
+  
+  decodeBarcode();
 }
+
 
 void alignRobot() {
   while (true) {
@@ -418,8 +388,6 @@ void setup() {
 
   alignRobot();
   // Perform the barcode scanning
-  barcodeOutput();
-  decodeBarcode();
 }
 
 void moveForward() {
