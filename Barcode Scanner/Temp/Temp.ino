@@ -281,8 +281,6 @@ void barcodeOutput() {
 // Main function for the code
 // Initialises relavent features
 // Calls function to scan the barcode and create arrays
-// Prints all relavent arrays
-// Calls function to decode the relavent arrays
 void setup() {
   //start serial connection
   Serial.begin(9600);
