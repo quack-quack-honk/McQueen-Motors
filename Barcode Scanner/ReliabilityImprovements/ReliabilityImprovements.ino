@@ -19,8 +19,10 @@ const int sensorPin2 = 3;
 const int sensorPin3 = 4;
 const int sensorPin4 = 5;
 const int sensorPin5 = 6;
-const int arraySize = 67;  // Defining how long the barcode will be
-bool BinCode[arraySize];   // Array containing the whole binary sequence for the barcode       
+const int BinCodeSize = 67;  // Defining how long the barcode will be
+const int readingArraySize = BinCodeSize*10;
+bool BinCode[BinCodeSize];   // Array containing the whole binary sequence for the barcode
+bool readingBarcode[readingArraySize];
 bool LeftSide[28];         // Splits the first half of BinCode, removing identifier bits
 bool RightSide[28];        // Splits the second half of BinCode, removing identifier bits
 bool DBit1[7];             // Contains binary information for the 1st denary bit
@@ -59,13 +61,72 @@ void setup() {
   lcd.init(); // initialize the lcd
   lcd.backlight();
   
-  alignRobot();
+  scanBarcode();
+//  alignRobot();
 }
 
 // Function to drive over barcode and collect data to put into an array
 // Robot drives for a specified time which corresponds to the length of the barcode
 // Takes data inputted from sensor/button and creates an array
 void scanBarcode() {
+
+  // Output the current value of the serial input
+  for (int i = 0; i < readingArraySize; i++) {
+    // Read and print the current serial input value
+    while (!Serial.available()) {
+      // Wait for serial input
+    }
+    int serialValue = Serial.read() - '0'; // Convert ASCII to integer
+    Serial.print("Current Serial Input: ");
+    Serial.println(serialValue);
+
+    // Add the serial input status to the array
+    readingBarcode[i] = serialValue;
+  }
+  Serial.println("testing Barcode: ");
+  for (int i = 0; i < readingArraySize; i++) {
+    Serial.print(readingBarcode[i]);
+  }
+  Serial.println();
+
+
+
+
+  int i, j;
+  int count_0, count_1;
+
+    // Iterate over the data array in chunks of 10
+    for (i = 0, j = 0; j < BinCodeSize; i += 10, j++) {
+      count_0 = 0;
+      count_1 = 0;
+
+      // Count the occurrences of 0s and 1s in the current chunk
+      for (int k = 0; k < 10; k++) {
+        if (readingBarcode[i + k] == 0)
+          count_0++;
+        else
+          count_1++;
+        }
+
+      // Append the more frequent number to bin_code
+      if (count_0 > count_1)
+        BinCode[j] = 0;
+      else 
+        BinCode[j] = 1;
+    }
+      Serial.print("BinaryCode:");
+      for (int i = 0; i < BinCodeSize; i++) {
+        Serial.print(BinCode[i]);
+        Serial.print(" ");
+      }
+}
+
+
+
+
+
+
+/*
   servoLeft.writeMicroseconds(1555);  // left wheel forwards
   servoRight.writeMicroseconds(1430); // right wheel forwards
 
@@ -84,7 +145,7 @@ void scanBarcode() {
   stopMotors();
   validateBarcode();
 
-/*
+
   // Output the current value of the serial input
   for (int i = 0; i < arraySize; i++) {
     // Read and print the current serial input value
@@ -100,7 +161,11 @@ void scanBarcode() {
   }
   validateBarcode();
 */
-}
+
+
+
+
+
 
 void validateBarcode() {
   // Check the identifier digits of the array
@@ -190,7 +255,7 @@ void decodeBarcode() {
 void barcodeOutput() {
   // Print the array values to the Serial Monitor at the end
   Serial.println("Binary Barcode: ");
-  for (int i = 0; i < arraySize; i++) {
+  for (int i = 0; i < BinCodeSize; i++) {
     Serial.print(BinCode[i]);
   }
   Serial.println();
