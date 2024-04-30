@@ -79,7 +79,7 @@ void scanBarcode() {
     BinCode[i] = sensorValue;
 
     // Optional delay before reading again
-    delay(68);
+    delay(50);
   }
   stopMotors();
   validateBarcode();
@@ -304,8 +304,9 @@ void alignRobot() {
     if (sensorValue1 && sensorValue5){
       edgeForward();
     } else if (!sensorValue1 && !sensorValue5) {
-      stopMotors();
-      //scanBarcode();
+      pauseMotors();
+      delay(1000);
+      scanBarcode();
     } else if (sensorValue1 && !sensorValue5){
       reverseRight();
       // create code so that robot pivots around the sensor
@@ -346,12 +347,12 @@ void moveBackward() {
   servoRight.writeMicroseconds(1517); // Right wheel counterclockwise
 }
 
-/*
-void stopMotors() {
+
+void pauseMotors() {
   servoLeft.writeMicroseconds(1490);  // Left wheel clockwise
   servoRight.writeMicroseconds(1500); // Right wheel clockwise
 }
-*/
+
 
 void moveForward() {
   servoLeft.writeMicroseconds(1700);
