@@ -55,10 +55,13 @@ void setup() {
 
   servoLeft.attach(13);
   servoRight.attach(12);
- 
+
   lcd.init(); // initialize the lcd
   lcd.backlight();
-  
+//  edgeForward();
+//  delay(2000);
+//  stopMotors();
+//  mediumForward();
   alignRobot();
 }
 
@@ -66,8 +69,9 @@ void setup() {
 // Robot drives for a specified time which corresponds to the length of the barcode
 // Takes data inputted from sensor/button and creates an array
 void scanBarcode() {
-  servoLeft.writeMicroseconds(1555);  // left wheel forwards
-  servoRight.writeMicroseconds(1430); // right wheel forwards
+//  servoLeft.writeMicroseconds(1555);  // left wheel forwards
+//  servoRight.writeMicroseconds(1430); // right wheel forwards
+  moveForward();
 
   for (int i = 0; i < arraySize; i++) {
     // Read and print the current sensor input value
@@ -78,8 +82,8 @@ void scanBarcode() {
     // Add the sensor input status to the array
     BinCode[i] = sensorValue;
 
-    // Optional delay before reading again
-    delay(68);
+    // Delay before reading again
+    delay(52);
   }
   stopMotors();
   validateBarcode();
@@ -166,6 +170,9 @@ void decodeBarcode() {
     } else {
       decodedDigits[i - 1] = -1;  // Indicates an error
       Serial.println("Not a valid barcode");
+        lcd.clear();                 // clear display
+        lcd.setCursor(0, 0);         // move cursor to   (2, 1)
+         lcd.print("Not a valid Barcode"); // print message at (2, 1)
       reverseBarcode();
       return;  // Exit the function since it's not a valid barcode
     }
@@ -304,8 +311,9 @@ void alignRobot() {
     if (sensorValue1 && sensorValue5){
       edgeForward();
     } else if (!sensorValue1 && !sensorValue5) {
-      stopMotors();
-      //scanBarcode();
+      //stopMotors();
+      delay(150);
+      scanBarcode();
     } else if (sensorValue1 && !sensorValue5){
       reverseRight();
       // create code so that robot pivots around the sensor
@@ -319,6 +327,11 @@ void alignRobot() {
 void edgeForward() {
   servoLeft.writeMicroseconds(1500);
   servoRight.writeMicroseconds(1485);
+}
+
+void mediumForward() {
+  servoLeft.writeMicroseconds(1520);
+  servoRight.writeMicroseconds(1465);
 }
 
 void curveLeft() {
@@ -346,23 +359,23 @@ void moveBackward() {
   servoRight.writeMicroseconds(1517); // Right wheel counterclockwise
 }
 
-/*
+
 void stopMotors() {
-  servoLeft.writeMicroseconds(1490);  // Left wheel clockwise
-  servoRight.writeMicroseconds(1500); // Right wheel clockwise
+  servoLeft.writeMicroseconds(1490);
+  servoRight.writeMicroseconds(1500);
 }
-*/
+
 
 void moveForward() {
-  servoLeft.writeMicroseconds(1700);
-  servoRight.writeMicroseconds(1300);
+  servoLeft.writeMicroseconds(1555);  // left wheel forwards
+  servoRight.writeMicroseconds(1430); // right wheel forwards
 }
-
+/*
 void stopMotors() {
   servoLeft.detach();
   servoRight.detach();
 }
-
+*/
 // Function for repetitive tasks
 void loop() {
 }
