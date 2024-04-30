@@ -27,23 +27,27 @@ void setup() {
 
     servoLeft.writeMicroseconds(1555);  // left wheel forwards (calibrated straight speed for accuracy)
     servoRight.writeMicroseconds(1430); // right wheel forwards (calibrated straight speed for accuracy)
+    Serial.println("zone 1 forwards");
 
-    if(centre && !farLeft && !farRight){
-      zone = 2;
-    }else if (!centre && !left && !right && !farLeft && !farRight){
-      // crossover, so do nothing
-    }else if (!left){
+    if (!farLeft || !farRight){
+      delay(100);
+      if ((left || right) && !farLeft && !farRight){
+        zone == 2;
+      }
+    }else if (right){
       do{
         updateSensors();
         servoLeft.writeMicroseconds(1490);  // left wheel stop
         servoRight.writeMicroseconds(1450); // right wheel slow forward
-      }while(!left);
-    }else if (!right){
+        Serial.println("right sensor trigger");
+      }while(right);
+    }else if (left){
       do{
         updateSensors();
-        servoLeft.writeMicroseconds(1525); // left wheel slow forward
+        servoLeft.writeMicroseconds(1530); // left wheel slow forward
         servoRight.writeMicroseconds(1500); // right wheel stop
-      }while(!right);
+        Serial.println("left sensor trigger");
+      }while(left);
     }
 
 
@@ -55,21 +59,24 @@ void setup() {
 
     servoLeft.writeMicroseconds(1555);  // left wheel forwards (calibrated straight speed for accuracy)
     servoRight.writeMicroseconds(1430); // right wheel forwards (calibrated straight speed for accuracy)
-    if (!centre && farLeft && farRight){
-      zone = 3;
-    }else if (centre && left && right && farLeft && farRight){
-      // crossover, so do nothing
+    if (farLeft || farRight){
+      delay(100);
+      if ((!left || !right) && farLeft && farRight){
+        zone == 3;
+      }
     }else if (!right){
       do{
         updateSensors();
         servoLeft.writeMicroseconds(1490);  // left wheel stop
         servoRight.writeMicroseconds(1450); // right wheel slow forward
+        Serial.println("right sensor trigger");
       }while(!right);
     }else if (!left){
       do{
         updateSensors();
-        servoLeft.writeMicroseconds(1525); // left wheel slow forward
+        servoLeft.writeMicroseconds(1530); // left wheel slow forward
         servoRight.writeMicroseconds(1500); // right wheel stop
+        Serial.println("left sensor trigger");
       }while(!left);
     }
     
@@ -83,20 +90,22 @@ void setup() {
     servoLeft.writeMicroseconds(1555);  // left wheel forwards (calibrated straight speed for accuracy)
     servoRight.writeMicroseconds(1430); // right wheel forwards (calibrated straight speed for accuracy)
 
-    if(centre && farLeft && farRight){
+    if (left && right && farLeft && farRight){
       zone = 4;
-    }else if(!left){
+    }else if (right){
       do{
         updateSensors();
         servoLeft.writeMicroseconds(1490);  // left wheel stop
         servoRight.writeMicroseconds(1450); // right wheel slow forward
-      }while(!left);
-    }else if (!right){
+        Serial.println("right sensor trigger");
+      }while(right);
+    }else if (left){
       do{
         updateSensors();
-        servoLeft.writeMicroseconds(1525); // left wheel slow forward
+        servoLeft.writeMicroseconds(1530); // left wheel slow forward
         servoRight.writeMicroseconds(1500); // right wheel stop
-      }while(!right);
+        Serial.println("left sensor trigger");
+      }while(left);
     }
 
   }while(zone = 3);
@@ -116,7 +125,7 @@ void setup() {
   do{ 
     updateSensors();
     if(!farLeft && !farRight){
-      zone = 6
+      zone = 6;
     }
   }while(zone = 5);
 
@@ -139,6 +148,6 @@ void updateSensors(){
   farLeft = digitalRead(6);
   left = digitalRead(5);
   centre = digitalRead(4);
-  right = digitalRead(3);
+  right = digitalRead(4);
   farRight = digitalRead(2);  
 }
