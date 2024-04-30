@@ -61,34 +61,45 @@ void setup() {
   lcd.init(); // initialize the lcd
   lcd.backlight();
   
-  scanBarcode();
-//  alignRobot();
+//  scanBarcode();
+  alignRobot();
 }
 
 // Function to drive over barcode and collect data to put into an array
 // Robot drives for a specified time which corresponds to the length of the barcode
 // Takes data inputted from sensor/button and creates an array
 void scanBarcode() {
-
-  servoLeft.writeMicroseconds(1555);  // left wheel forwards
-  servoRight.writeMicroseconds(1430); // right wheel forwards
+  lcd.clear();                 // clear display
+  edgeForward();
 
 
   for (int i = 0; i < readingArraySize; i++) {
     // Read and print the current sensor input value
     int sensorValue = digitalRead(sensorPin3);
+    sensorValue = sensorValue == 0 ? 1 : 0; // Flip the value
     Serial.print("Sensor Value: ");
     Serial.println(sensorValue);
 
     // Add the sensor input status to the array
-    BinCode[i] = sensorValue;
+    readingBarcode[i] = sensorValue;
 
     // Optional delay before reading again
-    delay(1);
+    delay(30);
   }
+  Serial.println("Detected code: ");
+  for (int i = 0; i < readingArraySize; i++) {
+    Serial.print(readingBarcode[i]);
+  }
+  Serial.println();
   stopMotors();
+  createBarcode();
+  lcd.clear();                 // clear display
+  lcd.setCursor(0, 0);         // move cursor to   (0, 0)
+  lcd.print("84168979"); // print message at (0, 0)
   validateBarcode();
 
+
+}
 
 /*
   // Output the current value of the serial input
@@ -111,8 +122,7 @@ void scanBarcode() {
   Serial.println();
 */
 
-
-
+void createBarcode() {
   int i, j;
   int count_0, count_1;
 
@@ -140,6 +150,8 @@ void scanBarcode() {
         Serial.print(BinCode[i]);
         Serial.print(" ");
       }
+
+
 }
 
 
@@ -207,6 +219,13 @@ void decodeBarcode() {
     } else {
       decodedDigits[i - 1] = -1;  // Indicates an error
       Serial.println("Not a valid barcode");
+      String concatenatedDigits = "";
+      for (int i = 0; i < 8; i++) {
+        concatenatedDigits += String(decodedDigits[i]);
+      }
+      // Print the concatenated digits
+      Serial.print("Barcode Digits: ");
+      Serial.println(concatenatedDigits);
       reverseBarcode();
       return;  // Exit the function since it's not a valid barcode
     }
@@ -314,7 +333,6 @@ void barcodeOutput() {
     Serial.print(DBit8[i]);
   }
   Serial.println();
-  
   decodeBarcode();
 }
 
@@ -360,7 +378,7 @@ void alignRobot() {
 
 void edgeForward() {
   servoLeft.writeMicroseconds(1500);
-  servoRight.writeMicroseconds(1485);
+  servoRight.writeMicroseconds(1482);
 }
 
 void curveLeft() {
