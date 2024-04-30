@@ -19,9 +19,9 @@ const int sensorPin2 = 3;
 const int sensorPin3 = 4;
 const int sensorPin4 = 5;
 const int sensorPin5 = 6;
-const int BinCodeSize = 67;  // Defining how long the barcode will be
+const int BinCodeSize = 67;// Defining how long the barcode will be
 const int readingArraySize = BinCodeSize*10;
-bool BinCode[BinCodeSize];   // Array containing the whole binary sequence for the barcode
+bool BinCode[BinCodeSize]; // Array containing the whole binary sequence for the barcode
 bool readingBarcode[readingArraySize];
 bool LeftSide[28];         // Splits the first half of BinCode, removing identifier bits
 bool RightSide[28];        // Splits the second half of BinCode, removing identifier bits
