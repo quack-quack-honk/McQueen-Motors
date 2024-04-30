@@ -70,6 +70,27 @@ void setup() {
 // Takes data inputted from sensor/button and creates an array
 void scanBarcode() {
 
+  servoLeft.writeMicroseconds(1555);  // left wheel forwards
+  servoRight.writeMicroseconds(1430); // right wheel forwards
+
+
+  for (int i = 0; i < readingArraySize; i++) {
+    // Read and print the current sensor input value
+    int sensorValue = digitalRead(sensorPin3);
+    Serial.print("Sensor Value: ");
+    Serial.println(sensorValue);
+
+    // Add the sensor input status to the array
+    BinCode[i] = sensorValue;
+
+    // Optional delay before reading again
+    delay(1);
+  }
+  stopMotors();
+  validateBarcode();
+
+
+/*
   // Output the current value of the serial input
   for (int i = 0; i < readingArraySize; i++) {
     // Read and print the current serial input value
@@ -88,7 +109,7 @@ void scanBarcode() {
     Serial.print(readingBarcode[i]);
   }
   Serial.println();
-
+*/
 
 
 
@@ -120,51 +141,6 @@ void scanBarcode() {
         Serial.print(" ");
       }
 }
-
-
-
-
-
-
-/*
-  servoLeft.writeMicroseconds(1555);  // left wheel forwards
-  servoRight.writeMicroseconds(1430); // right wheel forwards
-
-  for (int i = 0; i < arraySize; i++) {
-    // Read and print the current sensor input value
-    int sensorValue = digitalRead(sensorPin3);
-    Serial.print("Sensor Value: ");
-    Serial.println(sensorValue);
-
-    // Add the sensor input status to the array
-    BinCode[i] = sensorValue;
-
-    // Optional delay before reading again
-    delay(68);
-  }
-  stopMotors();
-  validateBarcode();
-
-
-  // Output the current value of the serial input
-  for (int i = 0; i < arraySize; i++) {
-    // Read and print the current serial input value
-    while (!Serial.available()) {
-      // Wait for serial input
-    }
-    int serialValue = Serial.read() - '0'; // Convert ASCII to integer
-    Serial.print("Current Serial Input: ");
-    Serial.println(serialValue);
-
-    // Add the serial input status to the array
-    BinCode[i] = serialValue;
-  }
-  validateBarcode();
-*/
-
-
-
-
 
 
 void validateBarcode() {
@@ -369,8 +345,9 @@ void alignRobot() {
     if (sensorValue1 && sensorValue5){
       edgeForward();
     } else if (!sensorValue1 && !sensorValue5) {
-      stopMotors();
-      //scanBarcode();
+      pauseMotors();
+      delay(1000);
+      scanBarcode();
     } else if (sensorValue1 && !sensorValue5){
       reverseRight();
       // create code so that robot pivots around the sensor
@@ -411,12 +388,12 @@ void moveBackward() {
   servoRight.writeMicroseconds(1517); // Right wheel counterclockwise
 }
 
-/*
-void stopMotors() {
+
+void pauseMotors() {
   servoLeft.writeMicroseconds(1490);  // Left wheel clockwise
   servoRight.writeMicroseconds(1500); // Right wheel clockwise
 }
-*/
+
 
 void moveForward() {
   servoLeft.writeMicroseconds(1700);
