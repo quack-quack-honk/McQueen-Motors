@@ -16,9 +16,38 @@ void setup() {
   int zone = 1;
   // zone 1 : black line / white background
   // zone 2 : white line / black background
-  // zone 3 : barcode
-  // zone 4 : drive to stop position
-  // zone 5 : stop position and display barcode value
+  // zone 3 : black line / white background
+  // zone 4 : barcode
+  // zone 5 : black line white background
+  // zone 6 : stop position and display barcode value
+
+  // black on white following code
+  do{ 
+    updateSensors();
+
+    servoLeft.writeMicroseconds(1555);  // left wheel forwards (calibrated straight speed for accuracy)
+    servoRight.writeMicroseconds(1430); // right wheel forwards (calibrated straight speed for accuracy)
+
+    if(centre && !farLeft && !farRight){
+      zone = 2;
+    }else if (!centre && !left && !right && !farLeft && !farRight){
+      // crossover, so do nothing
+    }else if (!left){
+      do{
+        updateSensors();
+        servoLeft.writeMicroseconds(1490);  // left wheel stop
+        servoRight.writeMicroseconds(1450); // right wheel slow forward
+      }while(!left);
+    }else if (!right){
+      do{
+        updateSensors();
+        servoLeft.writeMicroseconds(1525); // left wheel slow forward
+        servoRight.writeMicroseconds(1500); // right wheel stop
+      }while(!right);
+    }
+
+
+  }while(zone = 1);
 
   // white on black following code
   do{ 
@@ -26,35 +55,11 @@ void setup() {
 
     servoLeft.writeMicroseconds(1555);  // left wheel forwards (calibrated straight speed for accuracy)
     servoRight.writeMicroseconds(1430); // right wheel forwards (calibrated straight speed for accuracy)
-
-    if (right){
-      do{
-        updateSensors();
-        servoLeft.writeMicroseconds(1490);  // left wheel stop
-        servoRight.writeMicroseconds(1450); // right wheel slow forward
-      }while(right);
-    }else if (left){
-      do{
-        updateSensors();
-        servoLeft.writeMicroseconds(1525); // left wheel slow forward
-        servoRight.writeMicroseconds(1500); // right wheel stop
-      }while(left);
-    }
-    
-    if(left && centre && right && !farLeft){
-      zone = 2;
-    }
-
-  }while(zone = 1);
-
-
-  do{ 
-    updateSensors();
-
-    servoLeft.writeMicroseconds(1555);  // left wheel forwards (calibrated straight speed for accuracy)
-    servoRight.writeMicroseconds(1430); // right wheel forwards (calibrated straight speed for accuracy)
-
-    if (!right){
+    if (!centre && farLeft && farRight){
+      zone = 3;
+    }else if (centre && left && right && farLeft && farRight){
+      // crossover, so do nothing
+    }else if (!right){
       do{
         updateSensors();
         servoLeft.writeMicroseconds(1490);  // left wheel stop
@@ -68,27 +73,52 @@ void setup() {
       }while(!left);
     }
     
-    if(!left && !centre && !right && farLeft){
-      zone = 3;
-    }
 
   }while(zone = 2);
+
+  // black on white following code
+  do{ 
+    updateSensors();
+
+    servoLeft.writeMicroseconds(1555);  // left wheel forwards (calibrated straight speed for accuracy)
+    servoRight.writeMicroseconds(1430); // right wheel forwards (calibrated straight speed for accuracy)
+
+    if(centre && farLeft && farRight){
+      zone = 4;
+    }else if(!left){
+      do{
+        updateSensors();
+        servoLeft.writeMicroseconds(1490);  // left wheel stop
+        servoRight.writeMicroseconds(1450); // right wheel slow forward
+      }while(!left);
+    }else if (!right){
+      do{
+        updateSensors();
+        servoLeft.writeMicroseconds(1525); // left wheel slow forward
+        servoRight.writeMicroseconds(1500); // right wheel stop
+      }while(!right);
+    }
+
+  }while(zone = 3);
+
 
   // barcode scanning code
   do{ 
     updateSensors();
 
-    // follow short black line then read barcode
+    //read barcode
 
 
 
-  }while(zone = 3);
+  }while(zone = 4);
 
   // drive to stop position
   do{ 
     updateSensors();
-
-  }while(zone = 4);
+    if(!farLeft && !farRight){
+      zone = 6
+    }
+  }while(zone = 5);
 
   // stop moving and display barcode value
   do{ 
@@ -96,8 +126,7 @@ void setup() {
   servoRight.writeMicroseconds(1500); // right wheel stop
 
 
-
-  }while(zone = 5);
+  }while(zone = 6);
 
 }
 
