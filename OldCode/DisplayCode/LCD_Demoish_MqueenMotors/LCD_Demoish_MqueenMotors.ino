@@ -11,12 +11,9 @@ void setup()
 void loop()
 {
   lcd.clear();                 // clear display
-  lcd.setCursor(2, 1);         // move cursor to   (2, 1)
-  lcd.print("FIANLLY"); // print message at (2, 1)
+  lcd.setCursor(5, 0);         // move cursor to   (2, 1)
+  lcd.print("KACHOW"); // print message at (2, 1)
+  lcd.setCursor(1, 1);         // move cursor to   (2, 1)
+  lcd.print("McQueen Motors"); // print message at (2, 1)
   delay(2000);                 // display the above for two seconds
-
-  lcd.clear();                  // clear display
-  lcd.setCursor(0, 1);          // move cursor to   (0, 1)
-  lcd.print("McweenMotors"); // print message at (0, 1)
-  delay(2000);                  // display the above for two seconds
 }
