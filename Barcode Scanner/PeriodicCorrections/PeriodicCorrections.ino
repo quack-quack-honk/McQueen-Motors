@@ -62,8 +62,8 @@ void setup() {
   lcd.init(); // initialize the lcd
   lcd.backlight();
   
-  scanBarcode();
-//  alignRobot();
+//  scanBarcode();
+  alignRobot();
 }
 
 // Function to drive over barcode and collect data to put into an array
@@ -73,7 +73,7 @@ void scanBarcode() {
   lcd.clear();                 // clear display
   edgeForward();
 
-/*
+
   for (int i = 0; i < readingArraySize; i++) {
     // Read and print the current sensor input value
     int sensorValue = digitalRead(sensorPin3);
@@ -84,8 +84,14 @@ void scanBarcode() {
     // Add the sensor input status to the array
     readingBarcode[i] = sensorValue;
 
+    if (i == sampleRate*3) {
+      realigning();   // Call an aligning function
+      edgeForward(); // Resume the movement after alignment
+    }
+
+
     // Optional delay before reading again
-    delay(30);
+    delay(60);
   }
   Serial.println("Detected code: ");
   for (int i = 0; i < readingArraySize; i++) {
@@ -95,8 +101,9 @@ void scanBarcode() {
   stopMotors();
   createBarcode();
 }
-*/
 
+
+/*
   // Output the current value of the serial input
   for (int i = 0; i < readingArraySize; i++) {
     // Read and print the current serial input value
@@ -116,8 +123,7 @@ void scanBarcode() {
   }
   Serial.println();
   createBarcode();
-
-}
+*/
 
 void createBarcode() {
   int i, j;
@@ -359,6 +365,23 @@ void alignRobot() {
       pauseMotors();
       delay(500);
       scanBarcode();
+    } else if (sensorValue1 && !sensorValue5){
+      reverseRight();
+    } else if (sensorValue5 && !sensorValue1){
+      reverseLeft();
+    }
+  }
+}
+
+void realigning() {
+  while (true) {
+    int sensorValue1 = digitalRead(sensorPin1);
+    int sensorValue5 = digitalRead(sensorPin5);
+    
+    if (sensorValue1 && sensorValue5){
+      edgeForward();
+    } else if (!sensorValue1 && !sensorValue5) {
+      return;
     } else if (sensorValue1 && !sensorValue5){
       reverseRight();
     } else if (sensorValue5 && !sensorValue1){
