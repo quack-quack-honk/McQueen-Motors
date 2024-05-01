@@ -84,14 +84,14 @@ void scanBarcode() {
     // Add the sensor input status to the array
     readingBarcode[i] = sensorValue;
 
-    if (i == sampleRate*3) {
+    if (i == sampleRate*23) {
       realigning();   // Call an aligning function
       edgeForward(); // Resume the movement after alignment
     }
 
 
     // Optional delay before reading again
-    delay(60);
+    delay(59);
   }
   Serial.println("Detected code: ");
   for (int i = 0; i < readingArraySize; i++) {
@@ -392,7 +392,7 @@ void realigning() {
 
 void edgeForward() {
   servoLeft.writeMicroseconds(1500);
-  servoRight.writeMicroseconds(1482);
+  servoRight.writeMicroseconds(1483);
 }
 
 void curveLeft() {
