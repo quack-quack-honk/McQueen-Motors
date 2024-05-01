@@ -62,8 +62,8 @@ void setup() {
   lcd.init(); // initialize the lcd
   lcd.backlight();
   
-  scanBarcode();
-//  alignRobot();
+//  scanBarcode();
+  alignRobot();
 }
 
 // Function to drive over barcode and collect data to put into an array
@@ -73,7 +73,7 @@ void scanBarcode() {
   lcd.clear();                 // clear display
   edgeForward();
 
-/*
+
   for (int i = 0; i < readingArraySize; i++) {
     // Read and print the current sensor input value
     int sensorValue = digitalRead(sensorPin3);
@@ -85,7 +85,7 @@ void scanBarcode() {
     readingBarcode[i] = sensorValue;
 
     // Optional delay before reading again
-    delay(30);
+    delay(59);
   }
   Serial.println("Detected code: ");
   for (int i = 0; i < readingArraySize; i++) {
@@ -95,8 +95,8 @@ void scanBarcode() {
   stopMotors();
   createBarcode();
 }
-*/
 
+/*
   // Output the current value of the serial input
   for (int i = 0; i < readingArraySize; i++) {
     // Read and print the current serial input value
@@ -118,7 +118,7 @@ void scanBarcode() {
   createBarcode();
 
 }
-
+*/
 void createBarcode() {
   int i, j;
   int count_0, count_1;
@@ -369,7 +369,7 @@ void alignRobot() {
 
 void edgeForward() {
   servoLeft.writeMicroseconds(1500);
-  servoRight.writeMicroseconds(1482);
+  servoRight.writeMicroseconds(1483);
 }
 
 void curveLeft() {
