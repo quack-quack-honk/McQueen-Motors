@@ -4,6 +4,7 @@ Servo servoLeft;                      // Declare left and right servos
 Servo servoRight;
 bool left, centre, right;
 bool farLeft, farRight;
+int zone = 1;
 
 void setup() {
   
@@ -13,7 +14,7 @@ void setup() {
 
 
 
-  int zone = 1;
+
   // zone 1 : black line / white background
   // zone 2 : white line / black background
   // zone 3 : black line / white background
