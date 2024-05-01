@@ -58,6 +58,9 @@ void setup() {
     delay(100);
     updateSensors();
     Serial.println("zone 1 forwards");
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Zone 1");
 
     if (left && right){
       delay(100);
@@ -90,6 +93,10 @@ void setup() {
     delay(100);
     updateSensors();
     Serial.println("zone 2 forwards");
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Zone 2");
+
 
     if (!left && !right){
       delay(100);
@@ -122,6 +129,10 @@ void setup() {
     delay(100);
     updateSensors();
     Serial.println("zone 3 forwards");
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Zone 3");
+
 
     if (left && right && farLeft && farRight ){
         zone = 4;
@@ -148,27 +159,18 @@ void setup() {
 
   // barcode scanning code
   do{ 
+    Serial.println("zone 4 forwards");
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Zone 4");
+
     updateSensors();
 
     alignRobot();
 
   }while(zone = 4);
 
-  // drive to stop position
-  do{ 
-    updateSensors();
-    if(!farLeft && !farRight){
-      zone = 6;
-    }
-  }while(zone = 5);
-
-  // stop moving and display barcode value
-  do{ 
-  servoLeft.writeMicroseconds(1490);  // left wheel stop
-  servoRight.writeMicroseconds(1500); // right wheel stop
-
-
-  }while(zone = 6);
+  stopMotors();
 
 }
 
@@ -205,6 +207,7 @@ void scanBarcode() {
     Serial.print(readingBarcode[i]);
   }
   Serial.println();
+  delay(5000);
   stopMotors();
   createBarcode();
 }
