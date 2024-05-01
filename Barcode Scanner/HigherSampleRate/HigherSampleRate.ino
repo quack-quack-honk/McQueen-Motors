@@ -19,8 +19,11 @@ const int sensorPin2 = 3;
 const int sensorPin3 = 4;
 const int sensorPin4 = 5;
 const int sensorPin5 = 6;
-const int arraySize = 67;  // Defining how long the barcode will be
-bool BinCode[arraySize];   // Array containing the whole binary sequence for the barcode       
+const int BinCodeSize = 67;// Defining how long the barcode will be
+const int sampleRate = 5;
+const int readingArraySize = BinCodeSize*sampleRate;
+bool BinCode[BinCodeSize]; // Array containing the whole binary sequence for the barcode
+bool readingBarcode[readingArraySize];
 bool LeftSide[28];         // Splits the first half of BinCode, removing identifier bits
 bool RightSide[28];        // Splits the second half of BinCode, removing identifier bits
 bool DBit1[7];             // Contains binary information for the 1st denary bit
@@ -55,13 +58,11 @@ void setup() {
 
   servoLeft.attach(13);
   servoRight.attach(12);
-
+ 
   lcd.init(); // initialize the lcd
   lcd.backlight();
-//  edgeForward();
-//  delay(2000);
-//  stopMotors();
-//  mediumForward();
+  
+//  scanBarcode();
   alignRobot();
 }
 
@@ -69,33 +70,35 @@ void setup() {
 // Robot drives for a specified time which corresponds to the length of the barcode
 // Takes data inputted from sensor/button and creates an array
 void scanBarcode() {
-//  servoLeft.writeMicroseconds(1555);  // left wheel forwards
-//  servoRight.writeMicroseconds(1430); // right wheel forwards
-  moveForward();
+  lcd.clear();                 // clear display
+  edgeForward();
 
-  for (int i = 0; i < arraySize; i++) {
+
+  for (int i = 0; i < readingArraySize; i++) {
     // Read and print the current sensor input value
     int sensorValue = digitalRead(sensorPin3);
+    sensorValue = sensorValue == 0 ? 1 : 0; // Flip the value
     Serial.print("Sensor Value: ");
     Serial.println(sensorValue);
 
     // Add the sensor input status to the array
-    BinCode[i] = sensorValue;
+    readingBarcode[i] = sensorValue;
 
-<<<<<<< HEAD
-    // Delay before reading again
-    delay(52);
-=======
     // Optional delay before reading again
-    delay(50);
->>>>>>> Barcode-tests
+    delay(59);
   }
+  Serial.println("Detected code: ");
+  for (int i = 0; i < readingArraySize; i++) {
+    Serial.print(readingBarcode[i]);
+  }
+  Serial.println();
   stopMotors();
-  validateBarcode();
+  createBarcode();
+}
 
 /*
   // Output the current value of the serial input
-  for (int i = 0; i < arraySize; i++) {
+  for (int i = 0; i < readingArraySize; i++) {
     // Read and print the current serial input value
     while (!Serial.available()) {
       // Wait for serial input
@@ -105,11 +108,48 @@ void scanBarcode() {
     Serial.println(serialValue);
 
     // Add the serial input status to the array
-    BinCode[i] = serialValue;
+    readingBarcode[i] = serialValue;
   }
-  validateBarcode();
-*/
+  Serial.println("testing Barcode: ");
+  for (int i = 0; i < readingArraySize; i++) {
+    Serial.print(readingBarcode[i]);
+  }
+  Serial.println();
+  createBarcode();
+
 }
+*/
+void createBarcode() {
+  int i, j;
+  int count_0, count_1;
+
+    // Iterate over the data array in chunks of 10
+    for (i = 0, j = 0; j < BinCodeSize; i += sampleRate, j++) {
+      count_0 = 0;
+      count_1 = 0;
+
+      // Count the occurrences of 0s and 1s in the current chunk
+      for (int k = 0; k < sampleRate; k++) {
+        if (readingBarcode[i + k] == 0)
+          count_0++;
+        else
+          count_1++;
+        }
+
+      // Append the more frequent number to bin_code
+      if (count_0 > count_1)
+        BinCode[j] = 0;
+      else 
+        BinCode[j] = 1;
+    }
+      Serial.print("BinaryCode:");
+      for (int i = 0; i < BinCodeSize; i++) {
+        Serial.print(BinCode[i]);
+        Serial.print(" ");
+      }
+  validateBarcode();
+}
+
 
 void validateBarcode() {
   // Check the identifier digits of the array
@@ -175,14 +215,11 @@ void decodeBarcode() {
     } else {
       decodedDigits[i - 1] = -1;  // Indicates an error
       Serial.println("Not a valid barcode");
-        lcd.clear();                 // clear display
-        lcd.setCursor(0, 0);         // move cursor to   (2, 1)
-         lcd.print("Not a valid Barcode"); // print message at (2, 1)
+//      outputDigits(decodedDigits);
       reverseBarcode();
       return;  // Exit the function since it's not a valid barcode
     }
   }
-
   // Define a String variable to store concatenated digits
   String concatenatedDigits = "";
   // Concatenate all decoded digits into the variable
@@ -194,15 +231,19 @@ void decodeBarcode() {
   Serial.println(concatenatedDigits);
 
   lcd.clear();                 // clear display
-  lcd.setCursor(2, 1);         // move cursor to   (2, 1)
-  lcd.print(concatenatedDigits); // print message at (2, 1)
+  lcd.setCursor(0, 0);         // move cursor to (0, 0)
+  lcd.print(concatenatedDigits); // print message at (0, 0)
+  lcd.setCursor(0, 1);         // move cursor to (0, 0)
+  lcd.print("Checksum: OK"); // print message at (0, 0)
   delay(2000);                 // display the above for two seconds
 }
+
+
 
 void barcodeOutput() {
   // Print the array values to the Serial Monitor at the end
   Serial.println("Binary Barcode: ");
-  for (int i = 0; i < arraySize; i++) {
+  for (int i = 0; i < BinCodeSize; i++) {
     Serial.print(BinCode[i]);
   }
   Serial.println();
@@ -285,7 +326,6 @@ void barcodeOutput() {
     Serial.print(DBit8[i]);
   }
   Serial.println();
-  
   decodeBarcode();
 }
 
@@ -316,32 +356,20 @@ void alignRobot() {
     if (sensorValue1 && sensorValue5){
       edgeForward();
     } else if (!sensorValue1 && !sensorValue5) {
-<<<<<<< HEAD
-      //stopMotors();
-      delay(150);
-=======
       pauseMotors();
-      delay(1000);
->>>>>>> Barcode-tests
+      delay(500);
       scanBarcode();
     } else if (sensorValue1 && !sensorValue5){
       reverseRight();
-      // create code so that robot pivots around the sensor
     } else if (sensorValue5 && !sensorValue1){
       reverseLeft();
-      // create code so that robot pivots around the sensor
     }
   }
 }
 
 void edgeForward() {
   servoLeft.writeMicroseconds(1500);
-  servoRight.writeMicroseconds(1485);
-}
-
-void mediumForward() {
-  servoLeft.writeMicroseconds(1520);
-  servoRight.writeMicroseconds(1465);
+  servoRight.writeMicroseconds(1483);
 }
 
 void curveLeft() {
@@ -370,28 +398,22 @@ void moveBackward() {
 }
 
 
-<<<<<<< HEAD
-void stopMotors() {
-  servoLeft.writeMicroseconds(1490);
-  servoRight.writeMicroseconds(1500);
-=======
 void pauseMotors() {
   servoLeft.writeMicroseconds(1490);  // Left wheel clockwise
   servoRight.writeMicroseconds(1500); // Right wheel clockwise
->>>>>>> Barcode-tests
 }
 
 
 void moveForward() {
-  servoLeft.writeMicroseconds(1555);  // left wheel forwards
-  servoRight.writeMicroseconds(1430); // right wheel forwards
+  servoLeft.writeMicroseconds(1700);
+  servoRight.writeMicroseconds(1300);
 }
-/*
+
 void stopMotors() {
   servoLeft.detach();
   servoRight.detach();
 }
-*/
+
 // Function for repetitive tasks
 void loop() {
 }
