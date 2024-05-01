@@ -20,7 +20,8 @@ const int sensorPin3 = 4;
 const int sensorPin4 = 5;
 const int sensorPin5 = 6;
 const int BinCodeSize = 67;// Defining how long the barcode will be
-const int readingArraySize = BinCodeSize*10;
+const int sampleRate = 5;
+const int readingArraySize = BinCodeSize*sampleRate;
 bool BinCode[BinCodeSize]; // Array containing the whole binary sequence for the barcode
 bool readingBarcode[readingArraySize];
 bool LeftSide[28];         // Splits the first half of BinCode, removing identifier bits
@@ -61,8 +62,8 @@ void setup() {
   lcd.init(); // initialize the lcd
   lcd.backlight();
   
-//  scanBarcode();
-  alignRobot();
+  scanBarcode();
+//  alignRobot();
 }
 
 // Function to drive over barcode and collect data to put into an array
@@ -72,7 +73,7 @@ void scanBarcode() {
   lcd.clear();                 // clear display
   edgeForward();
 
-
+/*
   for (int i = 0; i < readingArraySize; i++) {
     // Read and print the current sensor input value
     int sensorValue = digitalRead(sensorPin3);
@@ -93,15 +94,9 @@ void scanBarcode() {
   Serial.println();
   stopMotors();
   createBarcode();
-  lcd.clear();                 // clear display
-  lcd.setCursor(0, 0);         // move cursor to   (0, 0)
-  lcd.print("84168979"); // print message at (0, 0)
-  validateBarcode();
-
-
 }
+*/
 
-/*
   // Output the current value of the serial input
   for (int i = 0; i < readingArraySize; i++) {
     // Read and print the current serial input value
@@ -120,19 +115,21 @@ void scanBarcode() {
     Serial.print(readingBarcode[i]);
   }
   Serial.println();
-*/
+  createBarcode();
+
+}
 
 void createBarcode() {
   int i, j;
   int count_0, count_1;
 
     // Iterate over the data array in chunks of 10
-    for (i = 0, j = 0; j < BinCodeSize; i += 10, j++) {
+    for (i = 0, j = 0; j < BinCodeSize; i += sampleRate, j++) {
       count_0 = 0;
       count_1 = 0;
 
       // Count the occurrences of 0s and 1s in the current chunk
-      for (int k = 0; k < 10; k++) {
+      for (int k = 0; k < sampleRate; k++) {
         if (readingBarcode[i + k] == 0)
           count_0++;
         else
@@ -150,8 +147,7 @@ void createBarcode() {
         Serial.print(BinCode[i]);
         Serial.print(" ");
       }
-
-
+  validateBarcode();
 }
 
 
@@ -219,18 +215,11 @@ void decodeBarcode() {
     } else {
       decodedDigits[i - 1] = -1;  // Indicates an error
       Serial.println("Not a valid barcode");
-      String concatenatedDigits = "";
-      for (int i = 0; i < 8; i++) {
-        concatenatedDigits += String(decodedDigits[i]);
-      }
-      // Print the concatenated digits
-      Serial.print("Barcode Digits: ");
-      Serial.println(concatenatedDigits);
+//      outputDigits(decodedDigits);
       reverseBarcode();
       return;  // Exit the function since it's not a valid barcode
     }
   }
-
   // Define a String variable to store concatenated digits
   String concatenatedDigits = "";
   // Concatenate all decoded digits into the variable
@@ -242,10 +231,14 @@ void decodeBarcode() {
   Serial.println(concatenatedDigits);
 
   lcd.clear();                 // clear display
-  lcd.setCursor(2, 1);         // move cursor to   (2, 1)
-  lcd.print(concatenatedDigits); // print message at (2, 1)
+  lcd.setCursor(0, 0);         // move cursor to (0, 0)
+  lcd.print(concatenatedDigits); // print message at (0, 0)
+  lcd.setCursor(0, 1);         // move cursor to (0, 0)
+  lcd.print("Checksum: OK"); // print message at (0, 0)
   delay(2000);                 // display the above for two seconds
 }
+
+
 
 void barcodeOutput() {
   // Print the array values to the Serial Monitor at the end
@@ -364,14 +357,12 @@ void alignRobot() {
       edgeForward();
     } else if (!sensorValue1 && !sensorValue5) {
       pauseMotors();
-      delay(1000);
+      delay(500);
       scanBarcode();
     } else if (sensorValue1 && !sensorValue5){
       reverseRight();
-      // create code so that robot pivots around the sensor
     } else if (sensorValue5 && !sensorValue1){
       reverseLeft();
-      // create code so that robot pivots around the sensor
     }
   }
 }
