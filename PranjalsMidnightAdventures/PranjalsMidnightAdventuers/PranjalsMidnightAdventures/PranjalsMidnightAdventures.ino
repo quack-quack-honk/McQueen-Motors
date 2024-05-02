@@ -53,7 +53,7 @@ void setup() {
 
   // black on white following code
   do{ 
-    servoLeft.writeMicroseconds(1490 + (+30)); // 30 speed  // left wheel forwards (calibrated straight speed for accuracy)
+    servoLeft.writeMicroseconds(1483 + (+30)); // 30 speed  // left wheel forwards (calibrated straight speed for accuracy)
     servoRight.writeMicroseconds(1500 - (+30)); // 30 speed // right wheel forwards (calibrated straight speed for accuracy)
     delay(100);
     updateSensors();
@@ -70,14 +70,14 @@ void setup() {
     }else if (right){
       do{
         updateSensors();
-        servoLeft.writeMicroseconds(1490 + (-10));  // left wheel 10 backward
+        servoLeft.writeMicroseconds(1483 + (-10));  // left wheel 10 backward
         servoRight.writeMicroseconds(1500 - (+20)); // right wheel 20 forward
         Serial.println("right sensor trigger");
       }while(right);
     }else if (left){
       do{
         updateSensors();
-        servoLeft.writeMicroseconds(1490 + (+20)); // left wheel 20 forward
+        servoLeft.writeMicroseconds(1483 + (+20)); // left wheel 20 forward
         servoRight.writeMicroseconds(1500 - (-10)); // right wheel 10 backward
         Serial.println("left sensor trigger");
       }while(left);
@@ -88,7 +88,7 @@ void setup() {
 
   // white on black following code
   do{ 
-    servoLeft.writeMicroseconds(1490 + (+30)); // 30 speed  // left wheel forwards (calibrated straight speed for accuracy)
+    servoLeft.writeMicroseconds(1483 + (+30)); // 30 speed  // left wheel forwards (calibrated straight speed for accuracy)
     servoRight.writeMicroseconds(1500 - (+30)); // 30 speed // right wheel forwards (calibrated straight speed for accuracy)
     delay(100);
     updateSensors();
@@ -106,14 +106,14 @@ void setup() {
     }else if (!right){
       do{
         updateSensors();
-        servoLeft.writeMicroseconds(1490 + (-10));  // left wheel 10 backward
+        servoLeft.writeMicroseconds(1483 + (-10));  // left wheel 10 backward
         servoRight.writeMicroseconds(1500 - (+20)); // right wheel 20 forward
         Serial.println("right sensor trigger");
       }while(!right);
     }else if (!left){
       do{
         updateSensors();
-        servoLeft.writeMicroseconds(1490 + (+20)); // left wheel 20 forward
+        servoLeft.writeMicroseconds(1483 + (+20)); // left wheel 20 forward
         servoRight.writeMicroseconds(1500 - (-10)); // right wheel 10 backward
         Serial.println("left sensor trigger");
       }while(!left);
@@ -124,7 +124,7 @@ void setup() {
 
   // black on white following code
   do{ 
-    servoLeft.writeMicroseconds(1490 + (+30)); // 30 speed  // left wheel forwards (calibrated straight speed for accuracy)
+    servoLeft.writeMicroseconds(1483 + (+30)); // 30 speed  // left wheel forwards (calibrated straight speed for accuracy)
     servoRight.writeMicroseconds(1500 - (+30)); // 30 speed // right wheel forwards (calibrated straight speed for accuracy)
     delay(100);
     updateSensors();
@@ -140,14 +140,14 @@ void setup() {
     }else if (right){
       do{
         updateSensors();
-        servoLeft.writeMicroseconds(1490 + (-10));  // left wheel 10 backward
+        servoLeft.writeMicroseconds(1483 + (-10));  // left wheel 10 backward
         servoRight.writeMicroseconds(1500 - (+20)); // right wheel 20 forward
         Serial.println("right sensor trigger");
       }while(right);
     }else if (left){
       do{
         updateSensors();
-        servoLeft.writeMicroseconds(1490 + (+20)); // left wheel 20 forward
+        servoLeft.writeMicroseconds(1483 + (+20)); // left wheel 20 forward
         servoRight.writeMicroseconds(1500 - (-10)); // right wheel 10 backward
         Serial.println("left sensor trigger");
       }while(left);
@@ -560,7 +560,7 @@ void edgeForward() {
 }
 
 void curveLeft() {
-  servoLeft.writeMicroseconds(1490);  // left wheel stop
+  servoLeft.writeMicroseconds(1483);  // left wheel stop
   servoRight.writeMicroseconds(1480); // right wheel slow forward
 }
 
@@ -585,7 +585,7 @@ void moveBackward() {
 }
 
 void pauseMotors() {
-  servoLeft.writeMicroseconds(1490);  // Left wheel clockwise
+  servoLeft.writeMicroseconds(1483);  // Left wheel clockwise
   servoRight.writeMicroseconds(1500); // Right wheel clockwise
 }
 
