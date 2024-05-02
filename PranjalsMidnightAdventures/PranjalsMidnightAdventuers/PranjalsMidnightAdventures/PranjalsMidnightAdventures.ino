@@ -8,7 +8,6 @@ Servo servoRight;
 bool left, centre, right;
 bool farLeft, farRight;
 
-
 // Defining all global variables
 const int sensorPin1 = 2;
 const int sensorPin2 = 3;
@@ -512,7 +511,6 @@ void alignRobot() {
       edgeForward();
     } else if (!sensorValue1 && !sensorValue5) {
       pauseMotors();
-      delay(500);
       scanBarcode();
     } else if (sensorValue1 && !sensorValue5){
       reverseRight();
@@ -591,7 +589,6 @@ void updateSensors(){
   right = digitalRead(4);
   farRight = digitalRead(2);  
 }
-
 
 void loop() {
 }
