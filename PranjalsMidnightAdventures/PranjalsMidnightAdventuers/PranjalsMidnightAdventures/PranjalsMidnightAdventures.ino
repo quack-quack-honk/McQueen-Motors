@@ -31,6 +31,7 @@ bool DBit6[7];             // Contains binary information for the 6th denary bit
 bool DBit7[7];             // Contains binary information for the 7th denary bit
 bool DBit8[7];             // Contains binary information for the 8th denary bit which is also checksum bit
 int zone = 1;
+int n = 0; // Counter to prevent infinite looping in the case of misread
 
 void setup() {
   servoLeft.attach(13);
@@ -193,14 +194,37 @@ void scanBarcode() {
     // Add the sensor input status to the array
     readingBarcode[i] = sensorValue;
 
-    if (i == sampleRate*23) {
+    if (i == sampleRate*9) {
       realigning();   // Call an aligning function
       edgeForward(); // Resume the movement after alignment
-    }
-
+    } else if (i == sampleRate*16) {
+      realigning();   // Call an aligning function
+      edgeForward(); // Resume the movement after alignment
+    } else if (i == sampleRate*23) {
+      realigning();   // Call an aligning function
+      edgeForward(); // Resume the movement after alignment
+    } else if (i == sampleRate*30) {
+      realigning();   // Call an aligning function
+      edgeForward(); // Resume the movement after alignment
+    } else if (i == sampleRate*32) {
+      realigning();   // Call an aligning function
+      edgeForward(); // Resume the movement after alignment
+    } else if (i == sampleRate*36) {
+      realigning();   // Call an aligning function
+      edgeForward(); // Resume the movement after alignment
+    } else if (i == sampleRate*43) {
+      realigning();   // Call an aligning function
+      edgeForward(); // Resume the movement after alignment
+    } else if (i == sampleRate*50) {
+      realigning();   // Call an aligning function
+      edgeForward(); // Resume the movement after alignment
+    } else if (i == sampleRate*57) {
+      realigning();   // Call an aligning function
+      edgeForward(); // Resume the movement after alignment
+    } 
 
     // Optional delay before reading again
-    delay(59);
+    delay(58);
   }
   Serial.println("Detected code: ");
   for (int i = 0; i < readingArraySize; i++) {
@@ -268,20 +292,26 @@ void createBarcode() {
 
 
 void validateBarcode() {
-  n = 0 // Counter to prevent infinite looping in the case of misread
   // Check the identifier digits of the array
   if (!(BinCode[0] == 1 && BinCode[1] == 0 && BinCode[2] == 1
       &&BinCode[64] == 1 && BinCode[65] == 0 && BinCode[66] == 1
-      &&BinCode[31] == 0 && BinCode[32] == 1 && BinCode[33] == 0 && BinCode[34] == 1 && BinCode[35] == 0)&& n != 2) {
+      &&BinCode[31] == 0 && BinCode[32] == 1 && BinCode[33] == 0 && BinCode[34] == 1 && BinCode[35] == 0)&& (n != 2)) {
     Serial.println("Invalid identifiers");
-    barcodeOutput();
-  } else if n == 2{
+    n = n+1;
+    reverseBarcode();
+  } else if ((BinCode[0] == 1 && BinCode[1] == 0 && BinCode[2] == 1
+      &&BinCode[64] == 1 && BinCode[65] == 0 && BinCode[66] == 1
+      &&BinCode[31] == 0 && BinCode[32] == 1 && BinCode[33] == 0 && BinCode[34] == 1 && BinCode[35] == 0)&& (n != 2)) {
+    n = n+1;
+    reverseBarcode();
+  } else if (n == 2) {
     moveForward();
     delay(1000);
     stopMotors();
     lcd.clear();                  // clear display
     lcd.setCursor(0, 0);          // move cursor to (0, 0)
     lcd.print("Scan Failed");     // print message at (0, 0)
+    delay(100000);
   }
 }
 
@@ -353,14 +383,13 @@ void decodeBarcode() {
   // Print the concatenated digits
   Serial.print("Barcode Digits: ");
   Serial.println(concatenatedDigits);
-
   lcd.clear();                 // clear display
   lcd.setCursor(0, 0);         // move cursor to (0, 0)
   lcd.print(concatenatedDigits); // print message at (0, 0)
   lcd.setCursor(0, 1);         // move cursor to (0, 0)
   lcd.print("Checksum: OK"); // print message at (0, 0)
   zone = 5;
-  delay(2000);                 // display the above for two seconds
+  delay(100000);                 // display the above for two seconds
 }
 
 
@@ -461,7 +490,8 @@ void reverseBarcode(){
     Serial.print(" ");
   }
   Serial.println();
-  validateBarcode();
+  barcodeOutput();
+//  validateBarcode();
 }
 
 // Function to reverse the given array
@@ -539,12 +569,10 @@ void moveBackward() {
   servoRight.writeMicroseconds(1517); // Right wheel counterclockwise
 }
 
-
 void pauseMotors() {
   servoLeft.writeMicroseconds(1490);  // Left wheel clockwise
   servoRight.writeMicroseconds(1500); // Right wheel clockwise
 }
-
 
 void moveForward() {
   servoLeft.writeMicroseconds(1700);
