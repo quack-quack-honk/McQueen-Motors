@@ -43,7 +43,7 @@ void setup() {
   pinMode(sensorPin5, INPUT);
   lcd.init(); // initialize the lcd
   lcd.backlight();
-
+  
   // zone 1 : black line / white background
   // zone 2 : white line / black background
   // zone 3 : black line / white background
@@ -572,9 +572,14 @@ void pauseMotors() {
   servoRight.writeMicroseconds(1500); // Right wheel clockwise
 }
 
-void moveForward() {
+void fullSpeed() {
   servoLeft.writeMicroseconds(1700);
   servoRight.writeMicroseconds(1300);
+}
+
+void moveForward() {
+  servoLeft.writeMicroseconds(1536);
+  servoRight.writeMicroseconds(1450);
 }
 
 void stopMotors() {
