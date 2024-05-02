@@ -556,7 +556,7 @@ void realigning() {
 
 void edgeForward() {
   servoLeft.writeMicroseconds(1500);
-  servoRight.writeMicroseconds(1483);
+  servoRight.writeMicroseconds(1482);
 }
 
 void curveLeft() {
