@@ -208,6 +208,9 @@ void scanBarcode() {
     } else if (i == sampleRate*32) {
       realigning();   // Call an aligning function
       edgeForward(); // Resume the movement after alignment
+    } else if (i == sampleRate*34) {
+      realigning();   // Call an aligning function
+      edgeForward(); // Resume the movement after alignment
     } else if (i == sampleRate*36) {
       realigning();   // Call an aligning function
       edgeForward(); // Resume the movement after alignment
@@ -218,6 +221,9 @@ void scanBarcode() {
       realigning();   // Call an aligning function
       edgeForward(); // Resume the movement after alignment
     } else if (i == sampleRate*57) {
+      realigning();   // Call an aligning function
+      edgeForward(); // Resume the movement after alignment
+    } else if (i == sampleRate*64) {
       realigning();   // Call an aligning function
       edgeForward(); // Resume the movement after alignment
     } 
@@ -306,13 +312,24 @@ void validateBarcode() {
   } else if (n == 2) {
     moveForward();
     delay(1000);
-    stopMotors();
+    pauseMotors();
     lcd.clear();                  // clear display
     lcd.setCursor(0, 0);          // move cursor to (0, 0)
     lcd.print("Scan Failed");     // print message at (0, 0)
-    delay(100000);
+    n = 0;
+    rescan();
+//    delay(100000);
   }
 }
+
+void rescan() {
+  while (true) {
+    moveBackward();
+  }
+  delay(4000);
+  alignRobot();
+}
+
 
 // Function for the decoding of the binary information into 8-bit denary
 // Encoding key is defined
@@ -563,8 +580,8 @@ void reverseRight() {
 }
 
 void moveBackward() {
-  servoLeft.writeMicroseconds(1475);  // Left wheel clockwise
-  servoRight.writeMicroseconds(1517); // Right wheel counterclockwise
+  servoLeft.writeMicroseconds(1300);  // Left wheel clockwise
+  servoRight.writeMicroseconds(1700); // Right wheel counterclockwise
 }
 
 void pauseMotors() {
