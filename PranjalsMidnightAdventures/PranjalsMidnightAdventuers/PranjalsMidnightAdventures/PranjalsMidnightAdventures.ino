@@ -229,7 +229,7 @@ void scanBarcode() {
     } 
 
     // Optional delay before reading again
-    delay(58);
+    delay(54);
   }
   Serial.println("Detected code: ");
   for (int i = 0; i < readingArraySize; i++) {
@@ -316,12 +316,13 @@ void validateBarcode() {
     lcd.clear();                  // clear display
     lcd.setCursor(0, 0);          // move cursor to (0, 0)
     lcd.print("Scan Failed");     // print message at (0, 0)
-    n = 0;
-    rescan();
+//    n = 0;
+//    rescan();
 //    delay(100000);
   }
 }
 
+/*
 void rescan() {
   while (true) {
     moveBackward();
@@ -329,7 +330,7 @@ void rescan() {
   delay(4000);
   alignRobot();
 }
-
+*/
 
 // Function for the decoding of the binary information into 8-bit denary
 // Encoding key is defined
